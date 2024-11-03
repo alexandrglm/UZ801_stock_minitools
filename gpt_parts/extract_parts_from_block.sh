@@ -1,6 +1,10 @@
 #!/bin/bash
 
-nand_dump="myflash.bin"  
+read -p "Please provide ENTIRE block .img/.bin PATH: " nand_dump
+if [[ ! -f "$nand_dump" ]]; then
+    echo "File not found... $nand_dump"
+    exit 1
+fi
 output_dir="./output"
 mkdir -p "$output_dir"
 
@@ -59,4 +63,4 @@ dd if="$nand_dump" of="$output_dir/recovery.img" bs=1 count=$((0x1000000)) skip=
 echo "Extracting userdata partition..."
 dd if="$nand_dump" of="$output_dir/userdata.img" bs=1 count=$((0x99e6fe00)) skip=$((0x4a18c000))
 
-echo "Done!"
+echo "DOne!"
