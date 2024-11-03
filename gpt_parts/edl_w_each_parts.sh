@@ -45,5 +45,7 @@ edl_w_parts "persist" "$partition_dir/persist.img"
 edl_w_parts "cache" "$partition_dir/cache.img"
 edl_w_parts "recovery" "$partition_dir/recovery.img"
 edl_w_parts "userdata" "$partition_dir/userdata.img"
+edl_w_parts "PrimaryGPT" "$partition_dir/gpt_main0.img" 
+edl_w_parts "BackupGPT" "$partition_dir/gpt_backup0.img"
 
 echo "Done!"
