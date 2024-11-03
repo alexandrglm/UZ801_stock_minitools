@@ -34,6 +34,8 @@ declare -A partitions=(
     ["cache"]="cache.img"
     ["recovery"]="recovery.img"
     ["userdata"]="userdata.img"
+    ["PrimaryGPT"]="gpt_main0.img"
+    ["BackupGPT"]="gpt_backup0.img"
 )
 
 for partition in "${!partitions[@]}"; do
