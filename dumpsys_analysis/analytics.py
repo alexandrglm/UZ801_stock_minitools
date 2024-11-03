@@ -1,14 +1,14 @@
-#####################################################
-# System Analysis tool v.0.2                       #
-# alpha, sketching                                  #
-# 2024, Nov. 4rd.                                   #
-#####################################################
+#########################################################
+# - Device Analysis tool - v.0.2                        #
+#                                                       #
+# Author: Alexandr Gomez @alexandrglm                   #
+# Nov,4. 2024                                           #
+#                                                       #
+#########################################################
 
 import os
 import re
 from datetime import datetime
-
-### ESTO HAY QUE REORGANIZARLO (todas las secciones marcadas; separa defs lo suficiente como para ser limpio, escalable, legible)
 
 def analyze_ipa(ipa_log_path):
     try:
@@ -37,11 +37,32 @@ def analyze_packages3(packages3_log_path):
 def analyze_getprop(getprop_log_path):
     try:
         with open(getprop_log_path, 'r') as f:
-            return f.read()
+            getprop_data = f.read()
+
+            ## ro.build.date
+            match = re.search(r'\[ro\.build\.date]: \[(.*?)\]', getprop_data)
+            build_date = match.group(1) if match else ''
+            ## ro.build.fingerprint
+            match = re.search(r'\[ro\.build\.fingerprint]: \[(.*?)\]', getprop_data)
+            build_fingerprint = match.group(1) if match else ''
+            ## ro.build.version.release
+            match = re.search(r'\[ro\.build\.version\.release]: \[(.*?)\]', getprop_data)
+            build_versionRelease = match.group(1) if match else ''
+            ## sys.usb.config
+            match = re.search(r'\[sys\.usb\.config]: \[(.*?)\]', getprop_data)
+            build_usb_config = match.group(1) if match else ''
+            ## sys.usb.state
+            match = re.search(r'\[sys\.usb\.state]: \[(.*?)\]', getprop_data)
+            build_usb_state = match.group(1) if match else ''
+            ##ro.serialno
+            match = re.search(r'\[ro\.serialno]: \[(.*?)\]', getprop_data)
+            serialno = match.group(1) if match else ''
+            ## RECUERDA: añadir más módulos de getprop? hacer los returns y las calls en el mismo orden
+            return getprop_data, build_date, build_fingerprint, build_versionRelease, build_usb_config, build_usb_state, serialno
+
     except FileNotFoundError:
         print(f"ERROR: There's no getprop available: {getprop_log_path}")
-        return ''
-
+        return '', ''
 
 def analyze_dmesg(dmesg_log_path):
     try:
@@ -123,7 +144,6 @@ def analyze_dumpsys(dumpsys_data):
 
     return data
 
-
 def analyze_proc(proc_log_path):
     proc_data = {}
     current_section = None
@@ -147,8 +167,7 @@ def analyze_proc(proc_log_path):
         return {}
     return proc_data
 
-### ESTO HAY QUE REORGANIZARLO
-def generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, packages3_data, getprop_data):
+def generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, packages3_data, getprop_data, build_date, build_fingerprint, build_versionRelease, build_usb_config, build_usb_state, serialno):
 
     date = datetime.now().strftime("%Y%m%d_%H%M%S")
     html_path = f"./www/Dumpsys_log_{date}.html"
@@ -167,19 +186,21 @@ def generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, package
     interrupts = proc_data.get('n# /proc/interrupts', '')
 
     with open(html_path, "w") as f:
-        f.write(f"""
-<!DOCTYPE html>
+        f.write(f"""<!DOCTYPE html>
 <html lang="eu-es">
 
 <head>
 	<meta charset="UTF-8">
-	<title>System Analyzer from </title>
+	<title>Analysis: {input_devinfo} - {serialno} - {date}</title>
 	<link rel="stylesheet" href="../css/style.css">
 	<script src="../js/persianero.js"></script>
 </head>
 
 <body>
-	<h1> - System Analyzer from - </h1>
+	<h1> {input_devinfo} </h1>
+	<h2> Fingerprint: {build_fingerprint} </h2>
+	<h2> Build: {build_date} </h2>
+	<h2> Device S/N: {serialno} </h2>
 
 	<section id="system">
 		<h2>1. SYSTEM</h2>
@@ -233,8 +254,18 @@ def generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, package
 			</div>
 		</div>
 
+
 		<div class="persiana">
-			<h3>1.9 - DMESG</h3>
+			<h3>1.9 - USB </h3>
+			<div class="content">
+				<pre>USB availabe modes: {build_usb_config}</pre>
+				<pre>USB active modes: {build_usb_state}</pre>
+			</div>
+		</div>
+
+
+		<div class="persiana">
+			<h3>1.10 - DMESG</h3>
 			<div class="content">
 				<pre>{dmesg_data}</pre>
 			</div>
@@ -363,19 +394,20 @@ def generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, package
 		<div class="persiana">
 			<h3>5.1 - ANDROID </h3>
 			<div class="content">
-				<pre> PENDING </pre>
+				<pre> Android {build_versionRelease} </pre>
+				<pre> Fingerprint: {build_fingerprint} </pre>
 			</div>
 		</div>
 
 		<div class="persiana">
-			<h3>5.2 - List System apps </h3>
+			<h3>5.2 - SYSTEM apps </h3>
 			<div class="content">
 				<pre>{packagesS_data}</pre>
 			</div>
 		</div>
 
 		<div class="persiana">
-			<h3>5.3 - List User apps </h3>
+			<h3>5.3 - USER apps </h3>
 			<div class="content">
 				<pre>{packages3_data}</pre>
 			</div>
@@ -390,10 +422,9 @@ def generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, package
 
 </body>
 
-</html>
-""")
+</html>""")
 
-    print(f"HTML file generated at: {html_path}")
+    print(f"Device has been analyzed: {html_path}")
 
 def generate_js():
 
@@ -401,14 +432,10 @@ def generate_js():
     with open(js_path, "w") as f:
         f.write("""document.addEventListener('DOMContentLoaded', (event) => {
   var sections = document.querySelectorAll(".persiana");
-
   sections.forEach(function(section) {
     var title = section.querySelector("h3");
-
-
     title.addEventListener("click", function() {
       title.classList.toggle("active");
-
       var content = section.querySelector(".content");
       if (content.style.display === "block") {
         content.style.display = "none";
@@ -424,8 +451,7 @@ def generate_css():
 
     css_path = "./css/style.css"
     with open(css_path, "w") as f:
-        f.write("""
-body {
+        f.write("""body {
     font-family: Verdana, Geneva, sans-serif;
     widht: 100%;
     box-sizing: border-box;
@@ -496,7 +522,6 @@ li {
 }
 """)
 
-### ESTO HAY QUE REORGANIZARLO
 if __name__ == '__main__':
     folders = ["www", "js", "css"]
     for folder in folders:
@@ -511,10 +536,10 @@ if __name__ == '__main__':
     ipa_data = analyze_ipa('./ipa.log')
     packagesS_data = analyze_packagesS('./packagesS.log')
     packages3_data = analyze_packages3('./packages3.log')
-    getprop_data = analyze_getprop('./getprop.log')
+    getprop_data, build_date, build_fingerprint, build_versionRelease, build_usb_config, build_usb_state, serialno = analyze_getprop('./getprop.log')
 
+    input_devinfo = input("Device Brand - Model ? : ")
 
     generate_js()
     generate_css()
-    generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, packages3_data, getprop_data)
-
+    generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, packages3_data, getprop_data, build_date, build_fingerprint, build_versionRelease, build_usb_config, build_usb_state, serialno)
