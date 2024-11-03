@@ -1,6 +1,7 @@
 #!/bin/bash
 
-if ! command -v edl &> /dev/null; then
+edl_cmd="/usr/local/bin/edl"
+if ! command -v "$edl_cmd" &> /dev/null; then
     echo "ERROR: Check EDL, chroot, python env, etc..."
     exit 1
 fi
