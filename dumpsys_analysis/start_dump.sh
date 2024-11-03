@@ -1,19 +1,30 @@
-#!/bin/bash
+#!/bin/sh
+
+echo "#########################################################"
+echo "# - Device Analysis tool - v.0.2                        #"
+echo "#                                                       #"
+echo "# Author: Alexandr Gomez @alexandrglm                   #"
+echo "# Nov, 4. 2024                                          #"
+echo "#########################################################"
+echo ""
+echo ""
+echo "Retrieving data from device, please wait."
+echo ""
 
 # Device adb ready assumed
 # there's a "problem" with symlinks and users/groups with some binaries so .... PATHS need to be like this!!!
 
-## dumpsys part
+# Parte de dumpsys
 adb shell rm -rf /storage/emulated/0/dumpsys.log
 adb shell su -c 'touch /storage/emulated/0/dumpsys.log'
 adb shell su -c 'dumpsys > /sdcard/dumpsys.log'
 
-## dmesg
+# Parte de dmesg
 adb shell rm -rf /storage/emulated/0/dmesg.log
 adb shell su -c 'touch /storage/emulated/0/dmesg.log'
 adb shell su -c 'dmesg > /sdcard/dmesg.log'
 
-## /proc/x part
+# Parte de /proc
 adb shell rm -rf /sdcard/proc.log
 adb shell su -c 'touch /sdcard/proc.log'
 adb shell su -c 'echo "\n# /proc/cpuinfo" > /sdcard/proc.log; cat /proc/cpuinfo >> /sdcard/proc.log'
@@ -30,23 +41,22 @@ adb shell su -c 'echo "\n# /proc/modules" >> /sdcard/proc.log; cat /proc/modules
 adb shell su -c 'echo "\n# /proc/mounts" >> /sdcard/proc.log; cat /proc/mounts >> /sdcard/proc.log'
 adb shell su -c 'echo "\n# /proc/partitions" >> /sdcard/proc.log; cat /proc/partitions >> /sdcard/proc.log'
 
-## packages s/3
+# pm list installed -s / -3
 adb shell rm -rf /storage/emulated/0/packagesS.log /storage/emulated/0/packages3.log
-adb shell su -c '/storage/emulated/0/packagesS.log /storage/emulated/0/packages3.log'
+adb shell su -c 'touch /storage/emulated/0/packagesS.log /storage/emulated/0/packages3.log'
 adb shell su -c 'pm list packages -s > /sdcard/packagesS.log'
 adb shell su -c 'pm list packages -3 > /sdcard/packages3.log'
 
-## getprop mola
+# parte de getprop
 adb shell rm -rf /storage/emulated/0/getprop.log
-adb shell su -c '/storage/emulated/0/getprop.log'
+adb shell su -c 'touch /storage/emulated/0/getprop.log'
 adb shell su -c 'getprop > /sdcard/getprop.log'
 
-## nets ipa
+# nets ip a
 adb shell rm -rf /storage/emulated/0/ipa.log
-adb shell su -c '/storage/emulated/0/ipa.log'
+adb shell su -c 'touch /storage/emulated/0/ipa.log'
 adb shell su -c 'ip a > /storage/emulated/0/ipa.log'
 
-## pull part
 adb pull /sdcard/dumpsys.log dumpsys.log
 adb pull /sdcard/proc.log proc.log
 adb pull /sdcard/dmesg.log dmesg.log
@@ -55,7 +65,9 @@ adb pull /sdcard/packages3.log packages3.log
 adb pull /sdcard/getprop.log getprop.log
 adb pull /sdcard/ipa.log ipa.log
 
-## processing part
-# clear
+clear
+echo "Procesing data ..."
 python3 analytics.py
 rm -rf *.log
+
+echo "Done!"
