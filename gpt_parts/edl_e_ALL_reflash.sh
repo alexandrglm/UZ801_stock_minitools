@@ -1,11 +1,12 @@
 #!/bin/bash
 
-edl_cmd="/usr/local/bin/edl"
-if ! command -v "$edl_cmd" &> /dev/null; then
+if ! command -v edl_cmd &> /dev/null; then
     echo "ERROR: Check EDL, chroot, python env, etc..."
     exit 1
 fi
+
 output_dir="./output"
+edl_cmd="/usr/local/bin/edl"
 
 declare -A partitions=(
     ["modem"]="modem.img"
@@ -35,6 +36,8 @@ declare -A partitions=(
     ["cache"]="cache.img"
     ["recovery"]="recovery.img"
     ["userdata"]="userdata.img"
+    ["PrimaryGPT"]="gpt_main0.img"
+    ["BackupGPT"]="gpt_backup0.img"
 )
 
 for partition in "${!partitions[@]}"; do
