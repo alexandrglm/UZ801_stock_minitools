@@ -6,6 +6,9 @@
 #                                                       #
 #########################################################
 
+## This file is only valid for firmware versions prior to 2024.
+## Firm 2023 Feb, 03 valid.
+
 import os
 import re
 from datetime import datetime
