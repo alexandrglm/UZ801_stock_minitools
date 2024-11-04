@@ -1,5 +1,8 @@
 #!/bin/sh
 
+## This file is only valid for firmware versions prior to 2024.
+## Firm 2023 Feb, 03 valid.
+
 echo "#########################################################"
 echo "# - Device Analysis tool - v.0.2                        #"
 echo "#                                                       #"
