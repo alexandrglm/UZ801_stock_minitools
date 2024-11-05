@@ -244,13 +244,13 @@ def generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, package
 </head>
 
 <body>
-    <h1>{input_devinfo}</h1>
+    <h1>{input_devinfo}</h1><hr>
     <h2>Fingerprint: {build_fingerprint}</h2>
     <h2>Build: {build_date}</h2>
     <h2>Device S/N: {serialno}</h2>
-
+    <hr><br>
     <section id="system">
-        <h2>1. SYSTEM</h2>
+        <h2> - 1: System - </h2>
 
         <div class="container">
             <div class="persiana">
@@ -336,7 +336,7 @@ def generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, package
     </section>
 
     <section id="networking">
-        <h2>2. NETWORKING</h2>
+        <h2> - 2: Network - </h2>
 
         <div class="container">
             <div class="persiana">
@@ -369,7 +369,8 @@ def generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, package
     </section>
 
     <section id="filesystem">
-        <h2>3. STORAGE</h2>
+        <h2> - 3: Storage - </h2>
+
         <div class="container">
             <div class="persiana">
                 <h3>3.2 - Partitions</h3>
@@ -409,7 +410,8 @@ def generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, package
     </section>
 
     <section id="memory">
-        <h2>4. MEMORY</h2>
+        <h2> - 4: Memory - </h2>
+
         <div class="container">
             <div class="persiana">
                 <h3>4.1 - Memory info</h3>
@@ -504,7 +506,7 @@ def generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, package
     </section>
 
     <section id="OS">
-        <h2>5. OS</h2>
+        <h2> - 5: OS - </h2>
 
         <div class="container">
             <div class="persiana">
@@ -542,11 +544,11 @@ def generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, package
                 </div>
             </div>
         </div>
-        
+
     </section>
 
     <section id="shell">
-        <h2>6. Shell</h2>
+        <h2> - 6: Shell - </h2>
 
         <div class="container">
             <div class="persiana">
