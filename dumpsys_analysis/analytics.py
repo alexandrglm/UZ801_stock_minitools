@@ -11,6 +11,32 @@ import os
 import re
 from datetime import datetime
 
+def analyze_systemBins(system_bins_log_path):
+
+    try:
+        with open(system_bins_log_path, 'r') as f:
+            return f.read()
+    except FileNotFoundError:
+        print(f"ERROR: No system_bins logs available at {system_bins_log_path}")
+        return ''
+
+def analyze_busybox(busybox_log_path):
+
+    try:
+        with open(busybox_log_path, 'r') as f:
+            return f.read()
+    except FileNotFoundError:
+        print(f"ERROR: No busybox info at {busybox_log_path}. CHECK busybox!")
+        return ''
+
+def analyze_rootFiles(files_log_path):
+    try:
+        with open(files_log_path, 'r') as f:
+            return f.read()
+    except FileNotFoundError:
+        print(f"ERROR: No / files available, check find/busybox find: {files_log_path}")
+        return ''
+
 def analyze_ipa(ipa_log_path):
     try:
         with open(ipa_log_path, 'r') as f:
@@ -40,22 +66,27 @@ def analyze_getprop(getprop_log_path):
         with open(getprop_log_path, 'r') as f:
             getprop_data = f.read()
 
-        ## ro.build.date
+        # ro.build.date
         match = re.search(r'\[ro\.build\.date]: \[(.*?)\]', getprop_data)
         build_date = match.group(1) if match else ''
-        ## ro.build.fingerprint
+
+        # ro.build.fingerprint
         match = re.search(r'\[ro\.build\.fingerprint]: \[(.*?)\]', getprop_data)
         build_fingerprint = match.group(1) if match else ''
-        ## ro.build.version.release
+
+        # ro.build.version.release
         match = re.search(r'\[ro\.build\.version\.release]: \[(.*?)\]', getprop_data)
         build_versionRelease = match.group(1) if match else ''
-        ## sys.usb.config
+
+        # sys.usb.config
         match = re.search(r'\[sys\.usb\.config]: \[(.*?)\]', getprop_data)
         build_usb_config = match.group(1) if match else ''
-        ## sys.usb.state
+
+        # sys.usb.state
         match = re.search(r'\[sys\.usb\.state]: \[(.*?)\]', getprop_data)
         build_usb_state = match.group(1) if match else ''
-        ##ro.serialno
+
+        # ro.serialno
         match = re.search(r'\[ro\.serialno]: \[(.*?)\]', getprop_data)
         serialno = match.group(1) if match else ''
 
@@ -147,7 +178,6 @@ def analyze_dumpsys(dumpsys_data):
 
     return data
 
-
 def dumpsallservices(dumpsys_data):
     data = analyze_dumpsys(dumpsys_data)
     html_output = ""
@@ -170,7 +200,7 @@ def analyze_proc(proc_log_path):
                     if current_section:
                         proc_data[current_section] = section_content.strip()
 
-                    current_section = line[2:].strip() 
+                    current_section = line[2:].strip()
                     section_content = ''
                 elif current_section:
                     section_content += line + '\n'
@@ -184,11 +214,11 @@ def analyze_proc(proc_log_path):
 
     return proc_data
 
-def generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, packages3_data, getprop_data, build_date, build_fingerprint, build_versionRelease, build_usb_config, build_usb_state, serialno):
-
+def generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, packages3_data, getprop_data, build_date, build_fingerprint, build_versionRelease, build_usb_config, build_usb_state, serialno, files_data, systemBins_data, busybox_data):
     date = datetime.now().strftime("%Y%m%d_%H%M%S")
     html_path = f"./www/Analysis_{input_devinfo}-{serialno}-{date}.html"
 
+    # Mandatory specifying here every /proc/line ... needs to be moved to procs in order to clarify
     cpuinfo = proc_data.get('/proc/cpuinfo', '')
     version = proc_data.get('/proc/version', '')
     uptime = proc_data.get('/proc/uptime', '')
@@ -203,315 +233,345 @@ def generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, package
     interrupts = proc_data.get('/proc/interrupts', '')
 
     with open(html_path, "w") as f:
-        f.write(f"""<!DOCTYPE html>
+        f.write(f"""
+<!DOCTYPE html>
 <html lang="eu-es">
 <head>
-	<meta charset="UTF-8">
-	<title>Analysis: {input_devinfo} - {serialno} - {date}</title>
-	<link rel="stylesheet" href="../css/style.css">
-	<script src="../js/persianero.js"></script>
+    <meta charset="UTF-8">
+    <title>Analysis: {input_devinfo} - {serialno} - {date}</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/persianero.js"></script>
 </head>
 
 <body>
-	<h1> {input_devinfo} </h1>
-	<h2> Fingerprint: {build_fingerprint} </h2>
-	<h2> Build: {build_date} </h2>
-	<h2> Device S/N: {serialno} </h2>
+    <h1>{input_devinfo}</h1>
+    <h2>Fingerprint: {build_fingerprint}</h2>
+    <h2>Build: {build_date}</h2>
+    <h2>Device S/N: {serialno}</h2>
 
-	<section id="system">
-		<h2>1. SYSTEM</h2>
-  		
-    		<div class="container">
-		<div class="persiana">
-			<h3>1.1 - Chipset specs.</h3>
-			<div class="content">
-				<pre>{cpuinfo}</pre>
-			</div>
-		</div>
-  		</div>
+    <section id="system">
+        <h2>1. SYSTEM</h2>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>1.2 - Kernel 'uname -a'</h3>
-			<div class="content">
-				<pre>{version}</pre>
-			</div>
-		</div>
-  		</div>
+        <div class="container">
+            <div class="persiana">
+                <h3>1.1 - Chipset specs.</h3>
+                <div class="content">
+                    <pre>{cpuinfo}</pre>
+                </div>
+            </div>
+        </div>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>1.3 - Uptime / Average load </h3>
-			<div class="content">
-				<pre>{uptime} (in seconds) </pre>
-				<pre>{loadavg}  </pre>
-				<pre>Last minute | Last 5 mins | Last 15 mins | ExecutingProccess/TotalProccess | Last PID created</pre>
-			</div>
-		</div>
-  		</div>
+        <div class="container">
+            <div class="persiana">
+                <h3>1.2 - Kernel 'uname -a'</h3>
+                <div class="content">
+                    <pre>{version}</pre>
+                </div>
+            </div>
+        </div>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>1.4 - Kernel mods. loaded.</h3>
-			<div class="content">
-				<pre>{modules}</pre>
-			</div>
-		</div>
-  		</div>
-  
-  		<div class="container">
-		<div class="persiana">
-			<h3>1.7 - Powering info</h3>
-			<div class="content">
-				<p>
-					Power Source: {data.get('power_source', 'N/A')}<br>
-					Battery %: {data.get('battery_level', 'N/A')}%<br>
-					Battery Status: {data.get('battery_status', 'N/A')}<br>
-				</p>
-			</div>
-		</div>
-  		</div>
+        <div class="container">
+            <div class="persiana">
+                <h3>1.3 - Uptime / Average load</h3>
+                <div class="content">
+                    <pre>{uptime} (in seconds)</pre>
+                    <pre>{loadavg}</pre>
+                    <pre>Last minute | Last 5 mins | Last 15 mins | ExecutingProccess/TotalProccess | Last PID created</pre>
+                </div>
+            </div>
+        </div>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>1.8 - Sensors </h3>
-			<div class="content">
-				<ul>
-					{''.join([f'<li>{sensor}</li>' for sensor in data.get('sensors', [])])}
-				</ul>
-			</div>
-		</div>
-  		</div>
+        <div class="container">
+            <div class="persiana">
+                <h3>1.4 - Kernel mods. loaded.</h3>
+                <div class="content">
+                    <pre>{modules}</pre>
+                </div>
+            </div>
+        </div>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>1.9 - USB </h3>
-			<div class="content">
-				<pre>USB availabe modes: {build_usb_config}</pre>
-				<pre>USB active modes: {build_usb_state}</pre>
-			</div>
-		</div>
-  		</div>
+        <div class="container">
+            <div class="persiana">
+                <h3>1.7 - Powering info</h3>
+                <div class="content">
+                    <p>
+                        Power Source: {data.get('power_source', 'N/A')}<br>
+                        Battery %: {data.get('battery_level', 'N/A')}%<br>
+                        Battery Status: {data.get('battery_status', 'N/A')}<br>
+                    </p>
+                </div>
+            </div>
+        </div>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>1.10 - DMESG</h3>
-			<div class="content">
-				<pre>{dmesg_data}</pre>
-			</div>
-		</div>
-  		</div>
-  		
-	</section>
+        <div class="container">
+            <div class="persiana">
+                <h3>1.8 - Sensors</h3>
+                <div class="content">
+                    <ul>
+                        {''.join([f'<li>{sensor}</li>' for sensor in data.get('sensors', [])])}
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-	<section id="networking">
-		<h2>2. NETWORKING</h2>
-    		
-      		<div class="container">
-		<div class="persiana">
-			<h3>2.1 - Interfaces / Devices </h3>
-			<div class="content">
-				<pre>{netdev}</pre>
-			</div>
-		</div>
-  		</div>
+        <div class="container">
+            <div class="persiana">
+                <h3>1.9 - USB</h3>
+                <div class="content">
+                    <pre>USB available modes: {build_usb_config}</pre>
+                    <pre>USB active modes: {build_usb_state}</pre>
+                </div>
+            </div>
+        </div>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>2.2 - ifconfings / iw / ip a / ip route</h3>
-			<div class="content">
-				<ul>
-					{''.join([f"<li>{iface['name']}: {iface['ip']} (MTU: {iface['mtu']})</li>" for iface in data.get('network_interfaces', [])])}
-				</ul>
-			</div>
-		</div>
-  		</div>
+        <div class="container">
+            <div class="persiana">
+                <h3>1.10 - DMESG</h3>
+                <div class="content">
+                    <pre>{dmesg_data}</pre>
+                </div>
+            </div>
+        </div>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>2.3 'ip a'</h3>
-			<div class="content">
-				<pre>{ipa_data}</pre>
-			</div>
-		</div>
-  		</div>
-	</section>
+    </section>
 
-	<section id="filesystem">
-		<h2>3. STORAGE </h2>
-    		<div class="container">
-		<div class="persiana">
-			<h3>3.2 - Partitions </h3>
-			<div class="content">
-				<pre>{partitions}</pre>
-			</div>
-		</div>
-  		</div>
-  
-    		<div class="container">
-		<div class="persiana">
-			<h3>3.3 - Mount </h3>
-			<div class="content">
-				<pre>{mounts}</pre>
-			</div>
-		</div>
-  		</div>
-  
-    		<div class="container">
-		<div class="persiana">
-			<h3>3.4 - Diskstats</h3>
-			<div class="content">
-				<pre>{diskstats}</pre>
-			</div>
-		</div>
-  		</div>
-	</section>
+    <section id="networking">
+        <h2>2. NETWORKING</h2>
 
-	<section id="memory">
-		<h2>4. MEMORY</h2>
-    		<div class="container">
-		<div class="persiana">
-			<h3>4.1 - Memory info </h3>
-			<div class="content">
-				<pre>{meminfo}</pre>
-			</div>
-		</div>
-  		</div>
+        <div class="container">
+            <div class="persiana">
+                <h3>2.1 - Interfaces / Devices</h3>
+                <div class="content">
+                    <pre>{netdev}</pre>
+                </div>
+            </div>
+        </div>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>4.2 - VMstats</h3>
-			<div class="content">
-				<pre>{vmstat}</pre>
-			</div>
-		</div>
-  		</div>
-  
-  		<div class="container">
-		<div class="persiana">
-			<h3>4.3 IRQ Interrupts</h3>
-			<div class="content">
-				<pre>{interrupts}</pre>
-			</div>
-		</div>
-  		</div>
+        <div class="container">
+            <div class="persiana">
+                <h3>2.2 - ifconfig / iw / ip a / ip route</h3>
+                <div class="content">
+                    <ul>
+                        {''.join([f"<li>{iface['name']}: {iface['ip']} (MTU: {iface['mtu']})</li>" for iface in data.get('network_interfaces', [])])}
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>4.4 - Running services 'top'</h3>
-			<div class="content">
-				<ul>
-					{''.join([f'<li>{service}</li>' for service in data['services']])}
-				</ul>
-			</div>
-		</div>
-  		</div>
+        <div class="container">
+            <div class="persiana">
+                <h3>2.3 'ip a'</h3>
+                <div class="content">
+                    <pre>{ipa_data}</pre>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>4.5 - SurfaceFlinger's</h3>
-			<div class="content">
-				<pre>{data.get('surfaceflinger', 'N/A')}</pre>
-			</div>
-		</div>
-  		</div>
+    <section id="filesystem">
+        <h2>3. STORAGE</h2>
+        <div class="container">
+            <div class="persiana">
+                <h3>3.2 - Partitions</h3>
+                <div class="content">
+                    <pre>{partitions}</pre>
+                </div>
+            </div>
+        </div>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>4.6 - Buffers</h3>
-			<div class="content">
-				<pre>{data.get('allocated_buffers', 'N/A')}</pre>
-			</div>
-		</div>
-  		</div>
+        <div class="container">
+            <div class="persiana">
+                <h3>3.3 - Mount</h3>
+                <div class="content">
+                    <pre>{mounts}</pre>
+                </div>
+            </div>
+        </div>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>4.7 - Hardware Composer</h3>
-			<div class="content">
-				<pre>{data.get('hardware_composer', 'N/A')}</pre>
-			</div>
-		</div>
-  		</div>
+        <div class="container">
+            <div class="persiana">
+                <h3>3.4 - Diskstats</h3>
+                <div class="content">
+                    <pre>{diskstats}</pre>
+                </div>
+            </div>
+        </div>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>4.8 - Pending Intents logged</h3>
-			<div class="content">
-				<pre>{data.get('pending_intents', 'N/A')}</pre>
-			</div>
-		</div>
-  		</div>
+        <div class="container">
+            <div class="persiana">
+                <h3>3.5 - / paths</h3>
+                <div class="content">
+                    <pre>{files_data}</pre>
+                </div>
+            </div>
+        </div>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>4.9 - Registered services</h3>
-			<div class="content">
-				<pre>{data.get('registered_receivers', 'N/A')}</pre>
-			</div>
-		</div>
-    		</div>
+    </section>
 
-  		<div class="container">
-        	<div class="persiana">
-            	<h3>4.10 - DUMP OF SERVICE</h3>
-            		<div class="content">
-                		{dumpsallservices(dumpsys_data)}
-            		</div>
-        	</div>
-	   	</div>
-    	</section>
+    <section id="memory">
+        <h2>4. MEMORY</h2>
+        <div class="container">
+            <div class="persiana">
+                <h3>4.1 - Memory info</h3>
+                <div class="content">
+                    <pre>{meminfo}</pre>
+                </div>
+            </div>
+        </div>
 
-	<section id="OS">
-		<h2>5. OS</h2>
+        <div class="container">
+            <div class="persiana">
+                <h3>4.2 - VMstats</h3>
+                <div class="content">
+                    <pre>{vmstat}</pre>
+                </div>
+            </div>
+        </div>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>5.1 - ANDROID </h3>
-			<div class="content">
-				<pre> Android {build_versionRelease} </pre>
-				<pre> Fingerprint: {build_fingerprint} </pre>
-			</div>
-		</div>
-    		</div>
+        <div class="container">
+            <div class="persiana">
+                <h3>4.3 - IRQ Interrupts</h3>
+                <div class="content">
+                    <pre>{interrupts}</pre>
+                </div>
+            </div>
+        </div>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>5.2 - SYSTEM apps </h3>
-			<div class="content">
-				<pre>{packagesS_data}</pre>
-			</div>
-		</div>
-  		</div>
+        <div class="container">
+            <div class="persiana">
+                <h3>4.4 - Running services 'top'</h3>
+                <div class="content">
+                    <ul>
+                        {''.join([f'<li>{service}</li>' for service in data['services']])}
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-  		<div class="container">
-		<div class="persiana">
-			<h3>5.3 - USER apps </h3>
-			<div class="content">
-				<pre>{packages3_data}</pre>
-			</div>
-		</div>
-		</div>
-  
-  
-  		<div class="container">
-		<div class="persiana">
-			<h3>5.4 - Getprop unfiltered </h3>
-			<div class="content">
-				<pre>{getprop_data}</pre>
-			</div>
-		</div>
-		</div>
-  
+        <div class="container">
+            <div class="persiana">
+                <h3>4.5 - SurfaceFlinger's</h3>
+                <div class="content">
+                    <pre>{data.get('surfaceflinger', 'N/A')}</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="persiana">
+                <h3>4.6 - Buffers</h3>
+                <div class="content">
+                    <pre>{data.get('allocated_buffers', 'N/A')}</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="persiana">
+                <h3>4.7 - Hardware Composer</h3>
+                <div class="content">
+                    <pre>{data.get('hardware_composer', 'N/A')}</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="persiana">
+                <h3>4.8 - Pending Intents logged</h3>
+                <div class="content">
+                    <pre>{data.get('pending_intents', 'N/A')}</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="persiana">
+                <h3>4.9 - Registered services</h3>
+                <div class="content">
+                    <pre>{data.get('registered_receivers', 'N/A')}</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="persiana">
+                <h3>4.10 - DUMP OF SERVICE</h3>
+                <div class="content">
+                    {dumpsallservices(dumpsys_data)}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="OS">
+        <h2>5. OS</h2>
+
+        <div class="container">
+            <div class="persiana">
+                <h3>5.1 - ANDROID</h3>
+                <div class="content">
+                    <pre> Android {build_versionRelease} </pre>
+                    <pre> Fingerprint: {build_fingerprint} </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="persiana">
+                <h3>5.2 - SYSTEM apps</h3>
+                <div class="content">
+                    <pre>{packagesS_data}</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="persiana">
+                <h3>5.3 - USER apps</h3>
+                <div class="content">
+                    <pre>{packages3_data}</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="persiana">
+                <h3>5.4 - Getprop unfiltered</h3>
+                <div class="content">
+                    <pre>{getprop_data}</pre>
+                </div>
+            </div>
+        </div>
+        
+    </section>
+
+    <section id="shell">
+        <h2>6. Shell</h2>
+
+        <div class="container">
+            <div class="persiana">
+                <h3>6.1 - SYSTEM bins: </h3>
+                <div class="content">
+                    <pre>{systemBins_data}</pre>
+                </div>
+
+        <div class="container">
+            <div class="persiana">
+                <h3> 6.1.2 - BUSYBOX functions/binaries:</h4>
+                <div class="content">
+                    <pre>{busybox_data}</pre>
+                </div>
+            </div>
+        </div>
 </body>
-</html>""")
-
-    print(f"Device has been analyzed: {html_path}")
+</html>
+""")
 
 def generate_js():
     js_path = "./js/persianero.js"
     with open(js_path, "w") as f:
-        f.write("""document.addEventListener('DOMContentLoaded', (event) => {
+        f.write("""
+document.addEventListener('DOMContentLoaded', (event) => {
   var sections = document.querySelectorAll(".persiana");
   sections.forEach(function(section) {
     var title = section.querySelector("h3");
@@ -528,78 +588,82 @@ def generate_js():
 });
 """)
 
+
 def generate_css():
     css_path = "./css/style.css"
     with open(css_path, "w") as f:
         f.write("""
 body {
-	font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
-	/* width: 100%; */
-	box-sizing: border-box;
-	background-color: #3d3d3d;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+    /* width: 100%; */
+    box-sizing: border-box;
+    background-color: #3d3d3d;
 }
 h1 {
-	color: #bbb;
-	text-align: center;
+    color: #bbb;
+    text-align: center;
 }
 h2 {
-	color: #bbb;
-	margin-top: 20px;
+    color: #bbb;
+    margin-top: 20px;
 }
 h3 {
-	font-style: italic;
-	margin-top: 25px;
-	cursor: pointer;
-	position: relative;
+    font-style: italic;
+    margin-top: 25px;
+    cursor: pointer;
+    position: relative;
 }
 ul {
-	list-style: none;
-	padding: 0;
+    list-style: none;
+    padding: 0;
 }
 li {
-	margin-bottom: 5px;
+    margin-bottom: 5px;
 }
 .container {
-	padding: 20px;	
+    padding: 20px;
 }
 .persiana {
-	background-color: #eee;
-	color: #444;
-	padding: 18px;
-	width: 100%;
-	border: none;
-	/* text-align: left; */
-	outline: none;
-	font-size: 15px;
-	margin-bottom: 10px;
-	box-sizing: border-box;
-    	box-shadow: -18px 15px 26px 5px rgba(15,15,15,0.5);
-    	/* -webkit-box-shadow: -18px 15px 26px 5px rgba(49,49,49,0.9); */
-    	/* -moz-box-shadow: -18px 15px 26px 5px rgba(49, 49, 49, 0.9); */
+    background-color: #eee;
+    color: #444;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    /* text-align: left; */
+    outline: none;
+    font-size: 15px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    box-shadow: -18px 15px 26px 5px rgba(15,15,15,0.5);
+    /* -webkit-box-shadow: -18px 15px 26px 5px rgba(49,49,49,0.9); */
+    /* -moz-box-shadow: -18px 15px 26px 5px rgba(49, 49, 49, 0.9); */
     border-radius: 5px;
 }
 .persiana h3 {
-	padding-left: 20px; /* El puto margen para la flechita de los cojones que me ha vuelto loco dos horas */
+    padding-left: 20px; /* El puto margen para la flechita de los cojones que me ha vuelto loco dos horas */
 }
 .persiana h3::before {
-	content: "▶";
-	position: absolute;
-	left: 0;
-	font-size: 12px;
-	transition: transform 0.3s;
+    content: "▶";
+    position: absolute;
+    left: 0;
+    font-size: 12px;
+    transition: transform 0.3s;
 }
 .persiana.active h3::before { // does not work on latest webkit, idk why
-	transform: rotate(90deg);
-	content: "▼";
+    transform: rotate(90deg);
+    content: "▼";
+    position: absolute;
+    left: 0;
+    font-size: 12px;
+    transition: transform 0.3s;
 }
 .content {
-	padding: 0 18px;
-	display: none;
-	overflow: hidden;
-	background-color: #deff8c;
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #deff8c;
 }
 """)
-
 if __name__ == '__main__':
     folders = ["www", "js", "css"]
     for folder in folders:
@@ -615,9 +679,12 @@ if __name__ == '__main__':
     packagesS_data = analyze_packagesS('./packagesS.log')
     packages3_data = analyze_packages3('./packages3.log')
     getprop_data, build_date, build_fingerprint, build_versionRelease, build_usb_config, build_usb_state, serialno = analyze_getprop('./getprop.log')
+    files_data = analyze_rootFiles('./files.log')
+    systemBins_data = analyze_systemBins('./system_bins.log')
+    busybox_data = analyze_busybox('./busybox.log')
 
     input_devinfo = input("Device Brand - Model ? : ")
 
     generate_js()
     generate_css()
-    generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, packages3_data, getprop_data, build_date, build_fingerprint, build_versionRelease, build_usb_config, build_usb_state, serialno)
+    generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, packages3_data, getprop_data, build_date, build_fingerprint, build_versionRelease, build_usb_config, build_usb_state, serialno, files_data, systemBins_data, busybox_data)
