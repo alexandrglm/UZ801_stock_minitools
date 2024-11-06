@@ -578,6 +578,10 @@ def generate_js():
         f.write("""
 document.addEventListener('DOMContentLoaded', (event) => {
   var sections = document.querySelectorAll(".persiana");
+  var expandAllButton = document.getElementById("expandAll");
+  var collapseAllButton = document.getElementById("collapseAll");
+  var searchInput = document.getElementById("busqueda");
+
   sections.forEach(function(section) {
     var title = section.querySelector("h3");
     title.addEventListener("click", function() {
@@ -587,6 +591,37 @@ document.addEventListener('DOMContentLoaded', (event) => {
         content.style.display = "none";
       } else {
         content.style.display = "block";
+      }
+    });
+  });
+
+  expandAllButton.addEventListener("click", function() {
+    sections.forEach(function(section) {
+      var title = section.querySelector("h3");
+      var content = section.querySelector(".content");
+      title.classList.add("active");
+      content.style.display = "block";
+    });
+  });
+
+  collapseAllButton.addEventListener("click", function() {
+    sections.forEach(function(section) {
+      var title = section.querySelector("h3");
+      var content = section.querySelector(".content");
+      title.classList.remove("active");
+      content.style.display = "none";
+    });
+  });
+
+  searchInput.addEventListener("input", function() {
+    var searchTerm = searchInput.value.toLowerCase();
+    sections.forEach(function(section) {
+      var title = section.querySelector("h3").textContent.toLowerCase();
+      var content = section.querySelector(".content").textContent.toLowerCase();
+      if (title.includes(searchTerm) || content.includes(searchTerm)) {
+        section.style.display = "block";
+      } else {
+        section.style.display = "none";
       }
     });
   });
