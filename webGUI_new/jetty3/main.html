@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Convergence" />
     <link rel="stylesheet" href="css/main.css">
     <script src="./js/functions.js" defer></script>
+    <script src="./js/content-box.js" defer></script>
       <title>4G Modem</title>
 </head>
 <body>
@@ -18,16 +19,17 @@
       <button onclick="deviceInfo()">Device Info</button>
       <button onclick="wlanSetup()">WIFI Configs</button>
       <button onclick="lteSIM()">SIM / LTE Configs</button>
+      <button onclick="androidThings()"> Android Data(SMS/Calls/...)</button>
       <button onclick="shell()">Shell</button>
     </div>
   </div>
-
+<hr>
   <div id="main">
-    <div id="contenido"></div>
-  </div>
+    <div id="content-box"></div>
 
+  </div>
+<hr>
   <div id="footer">
-    <hr>
     <p>This is a real (body) footer xD</p>
   </div>
 </body>
