@@ -1,0 +1,7 @@
+1002:   Get general ifconfig for wlan/modem
+1003:   Get TX RX data + other value 
+1004:   3g/4g, #manual needs to get its values defined (umts/lte)
+
+1029:   imei = AT+GSN get serial number (imei)
+
+2002:    AT+ EGMR=1,7,"nImei"
