@@ -248,7 +248,10 @@ def generate_html(data, proc_data, dmesg_data, ipa_data, packagesS_data, package
     <h2>Fingerprint: {build_fingerprint}</h2>
     <h2>Build: {build_date}</h2>
     <h2>Device S/N: {serialno}</h2>
-    <hr><br>
+    <hr>
+    <button id="expandAll">Expand all</button>
+    <button id="colapseAll">Collapse all</button>
+    <input type="text" id="searchs" placeholder="Type the data ...">
     <section id="system">
         <h2> - 1: System - </h2>
 
