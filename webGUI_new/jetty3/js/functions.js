@@ -54,6 +54,10 @@ function lteSIM() {
 
 }
 
+function androidThings {
+
+}
+
 function openShell() {
 
 }
