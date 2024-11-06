@@ -22,7 +22,7 @@ body {
 #menu {
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    padding: 2px;
 }
 
 #menu p {
@@ -34,8 +34,9 @@ body {
 
 .button-row {
     display: flex;
-    justify-content: space-around;
-    margin-bottom: 15px;
+    justify-content: space-evenly;
+    /* margin-bottom: 15px; */
+    margin-top: 5px; /* this margin is supperposed by #menu !!! */
 }
 
 #menu .button-row button {
@@ -72,4 +73,13 @@ body {
     text-align: center;
     padding: 10px;
     font-family: 'Convergence', serif;
+}
+#content-box {
+    background-color: #444; 
+    color: #eee; 
+    border: solid 1px rgba(223, 255, 153, 0.8);
+    border-radius: 5px;
+    flex-grow: 1; 
+    padding: 5px; 
+    margin-right: 5px;
 }
