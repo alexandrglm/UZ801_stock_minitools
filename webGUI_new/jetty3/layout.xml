@@ -1,0 +1,148 @@
+<menu>
+  <category name="Device Info">
+    <item id="general">
+      <label>General</label>
+      <content>
+        <field name="IMEI" command="service call iphonesubinfo 1 | busybox busybox awk -F \"'\" '{print $2}'" />
+        <field name="Manufacturer" command="getprop ro.product.manufacturer" />
+        <field name="Model" command="getprop ro.product.model" />
+        <field name="Firmware Version" command="getprop ro.build.version.release" />
+        <field name="Signal Strength" command="dumpsys telephony.registry | grep -o 'mSignalStrength=.*' | busybox cut -d ' ' -f 2-" /> 
+      </content>
+    </item>
+    <item id="network">
+      <label>Network</label>
+      <content>
+        <field name="IP Address" command="ip addr show wlan0 | grep 'inet ' | busybox awk '{print $2}' | busybox cut -d/ -f1" /> 
+        <field name="Subnet Mask" command="ip addr show wlan0 | grep 'inet ' | busybox awk '{print $2}' | busybox cut -d/ -f2" /> 
+        <field name="DNS Server(s)" command="getprop net.dns1" /> 
+        <field name="Data Usage" command="cat /proc/net/dev" /> 
+      </content>
+    </item>
+    <item id="about">
+      <label>About</label>
+      <content>
+        <field name="Hardware Version" command="getprop ro.hardware" />
+        <field name="Software Version" command="getprop ro.build.version.incremental" /> 
+        <field name="Device Uptime" command="uptime" />
+        <field name="MAC Address" command="ip addr show wlan0 | grep 'link/ether' | busybox awk '{print $2}'" /> 
+      </content>
+    </item>
+  </category>
+
+  <category name="Wi-Fi Configs">
+    <item id="basic">
+      <label>Basic</label>
+      <content>
+        <field name="Status" command="settings get global wifi_on" /> <!--- needs to get wlan settings from wcnss files -->
+        <field name="SSID" command="settings get global wifi_ssid" /> <!--- needs to get wlan settings from wcnss files -->
+        <field name="IP Address (WLAN)" command="ip addr show wlan0 | grep 'inet ' | busybox awk '{print $2}' | busybox cut -d/ -f1" /> 
+        <field name="Connected Users" command="iw dev wlan0 station dump | grep Station | busybox wc -l" /> 
+      </content>
+    </item>
+    <item id="security">
+      <label>Security</label>
+      <content>
+        <field name="Encryption" command="settings get global wifi_security" /> 
+        <field name="Password" command="settings get global wifi_psk" /> 
+      </content>
+    </item>
+    <item id="advanced">
+      <label>Advanced</label>
+      <content>
+        <field name="MAC Address Filtering" command="iptables -L FORWARD -t filter" /> 
+        <field name="Max Stations" command="iw dev wlan0 info | grep 'max station'" />  <!--- iwlist commands need to be upgraded -->
+        <field name="Channel Selection" command="iwlist wlan0 channel" /> 
+        <field name="Transmit Power" command="iwconfig wlan0 | grep Tx-Power" /> 
+      </content>
+    </item>
+  </category>
+
+  <category name="MODEM Configs">
+    <item id="sim_card">
+      <label>SIM Card</label>
+      <content>
+        <field name="Status" command="dumpsys telephony.registry | grep 'mCallState=' | busybox awk '{print $2}'" /> 
+        <field name="IMSI" command="getprop gsm.sim.operator.numeric" /> 
+        <field name="ICCID" command="service call iphonesubinfo 11 | busybox awk -F \"'\" '{print $2}'" /> 
+      </content>
+    </item>
+    <item id="network">
+      <label>Network</label>
+      <content>
+        <field name="Network Selection" command="settings get global preferred_network_mode" /> 
+        <field name="APN Configuration" command="sqlite3 /data/data/com.android.providers.telephony/databases/telephony.db \"SELECT * FROM carriers;\"" /> 
+      </content>
+    </item>
+    <item id="advanced">
+      <label>Advanced</label>
+      <content>
+        <field name="Network Registration Mode" command="dumpsys telephony.registry | grep 'mNetworkRegistrationState=' | busybox awk '{print $2}'" /> 
+        <field name="Band Selection" command="dumpsys telephony.registry | grep 'mBands=' | busybox awk '{print $2}'" /> 
+        <field name="Roaming" command="settings get global data_roaming" /> 
+      </content>
+    </item>
+  </category>
+</menu>
+  <category name="Android Things">
+    <item id="androidInfo">
+      <label>Android Information</label>
+      <content>
+        <field name="Android Version" command="getprop ro.build.version.release" />
+        <field name="Kernel" command="busybox uname -a" />
+        <field name="Build Number" command="getprop ro.build.id" />
+        <field name="Fingerprint" command="getprop ro.build.fingerprint" />
+        <field name="Device Model" command="getprop ro.product.model" />
+        <field name="Manufacturer" command="getprop ro.product.manufacturer" />
+        <field name="Serial Number" command="getprop ro.serialno" />
+      </content>
+    </item>
+    <item id="phone">
+      <label>Phone tools</label>
+      <content>
+        <field name="Call Logs" command="dumpsys telephony.registry" />
+        <field name="SMS Messages" command="content query --uri content://sms/" />
+        <field name="Contacts" command="content query --uri content://contacts/people/" />
+      </content>
+    </item>
+    <item id="storage">
+      <label>Storage tools</label>
+      <content>
+        <field name="Internal Storage Info" command="df" />
+        <field name="Root Files" command="ls -l /" />
+      </content>
+    </item>
+    <item id="system_settings">
+      <label>System Settings</label>
+      <content>
+        <field name="Screen Timeout" command="settings get system screen_off_timeout" /> <!-- max Int32 value to prevent screen off -->
+        <field name="WiFi State" command="settings get global wifi_on" />
+        <field name="Bluetooth State" command="settings get global bluetooth_on" />
+        <field name="Location Mode" command="settings get secure location_mode" />
+      </content>
+    </item>
+    <item id="advanced">
+      <label>Advanced</label>
+      <content>
+        <field name="Reboot Device" command="reboot" />
+        <field name="EDL mode" command="reboot edl" />
+        <field name="Fastboot mode" command="reboot bootloader">
+        <field name="Install APK" command="pm install -r {$apkLocal}" />
+        <field name="Uninstall App" command="pm uninstall {$com.package.name}" />
+        <field name="Show Installed Apps" command="pm list packages -3" />
+        <field name="USB Debug mode" command="settings get global usb_debugging" /> <!-- proced with caution, this can break usb conn., EDL restore nand req -->
+      </content>
+    </item>
+  </category>
+
+    <category name="Shell">
+    <item id="general">
+      <label>Shell</label>
+      <content>
+        webShell box here
+      </content>
+    </item>
+  </category>
+
+  
+</menu>
