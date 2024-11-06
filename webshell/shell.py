@@ -2,32 +2,41 @@
 # - ADB shell parser webGUI v.0.1                       #
 #                                                       #
 # Author: Alexandr Gomez @alexandrglm                   #
-#                                                       #
 # Nov,6.2024                                            #
 #########################################################
-#
 ## Comments:
-# The main idea is using a functional shell on a self-contained html
-# parsing an input to adb shell "" commands
-# with mainly shell functions like:
-# - Commands history
-# - Input/returns auto-scroll
-# - TAB helping with no browser conflicts
-# - 'cd' memorized paths
+# This script creates a functional shell within a self-contained HTML page.
+# It parses user input and executes it as 'adb shell' commands.
 #
-# Simple python server config, needs to be updated to a jetty2 srv, included in dongle' firmware.
+# Key features:
+# - Securing the adb shell: Prevents command injection and execution of arbitrary commands outside the 'adb shell' context.
+# - Command history: Allows users to easily access and re-execute previous commands.
+# - Input/output auto-scroll: Automatically scrolls the output window to show the latest results.
+# - TAB completion: Provides convenient command and filename completion without browser conflicts.
+# - Persistent 'cd' paths: Remembers the current working directory between commands.
 #
-## py dependencies:
-# pip install Flask / apt install python3-flask
+# This is a simple Python server configuration, intended to be updated to a Jetty2 server and included in dongle firmware.
+#
+## TODO:
+# - Handle hyphens in 'cd' paths.
+# - Implement TAB key functionality.
+# - ......
+#
+## Python ext. dependencies:
+# Flask/python3-flask
+#
 
 import os
+import re
 import subprocess
 import shlex
+import webbrowser
 from threading import Timer
 from flask import Flask, request, jsonify, render_template_string
 
 app = Flask(__name__)
 current_path = "/"
+# hyphen_path =
 
 webShell = """
 <!DOCTYPE html>
@@ -80,7 +89,7 @@ webShell = """
     })
     .catch(error => {
       console.error('Error:', error);
-      document.getElementById("output").innerHTML += "<br># " + data.path + "<br>ERROR: " + "<br>";
+      document.getElementById("output").innerHTML += "<br># " + data.path + "<br>ALERT: " + "<br>";
       document.getElementById("output-container").scrollTop = document.getElementById("output-container").scrollHeight;
     });
   }
@@ -117,22 +126,36 @@ def execute_command():
     global current_path
     command = request.json['command']
 
+# not allowed commands
+#   if not command.startswith("","","","","","","","","","","","",""):
+#      return jsonify({'error': "DEBUG: Commands not allowerd !!! "})
+
     if command.startswith("cd "):
         try:
-            path = shlex.split(command[3:].strip())[0]
-            new_path = os.path.normpath(os.path.join(current_path, path))
-            full_command = f"cd {new_path} && pwd"
-            process = subprocess.Popen(['adb', 'shell', full_command],
-                                       stdout=subprocess.PIPE,
-                                       stderr=subprocess.PIPE)
-            stdout, stderr = process.communicate()
-            output = stdout.decode('utf-8').strip() if stdout else stderr.decode('utf-8')
+# validation prevents injections
+          if not re.match(r'^[a-zA-Z0-9/._-]+$', command[3:].strip()): # needs to be improved
+            return jsonify({'error': "DEBUG: Not allowed due to security reasons. Retype.", 'path': current_path}), 400
 
-            if output == new_path:
-                current_path = new_path
-                return jsonify({'output': "", 'path': current_path})
-            else:
-                return jsonify({'error': f"{path} does not exist", 'path': current_path}), 400
+          path = shlex.split(command[3:].strip())[0]
+          path = shlex.quote(path)
+
+          new_path = os.path.normpath(os.path.join(current_path, path))
+
+          full_command = f"cd {new_path} && pwd"
+
+          process = subprocess.Popen(['adb', 'shell', full_command],
+                                      stdout=subprocess.PIPE,
+                                      stderr=subprocess.PIPE)
+          stdout, stderr = process.communicate()
+          output = stdout.decode('utf-8').strip() if stdout else stderr.decode('utf-8')
+
+# pending add hyphen_paths here
+
+          if output == new_path:
+              current_path = new_path
+              return jsonify({'output': "", 'path': current_path})
+          else:
+              return jsonify({'error': f"{path} does not exist", 'path': current_path}), 400
 
         except Exception as e:
             return jsonify({'error': str(e), 'path': current_path}), 500
