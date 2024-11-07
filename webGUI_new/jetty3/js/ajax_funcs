@@ -1,8 +1,100 @@
-1002:   Get general ifconfig for wlan/modem
-1003:   Get TX RX data + other value 
-1004:   3g/4g, #manual needs to get its values defined (umts/lte)
+Functions with no analysis:
+  get_lan_status
+  get_lan_wwanConfig
+  get_lan_modifypwd
+  get_lan_operation
+  get_lan_main
 
-1029:   imei = AT+GSN get serial number (imei)
 
-2000:   adb shell reboot-bootloader
+
+## FuncNo   Info - ajax params - js vars
+
+1001:      Index main Info
+            rssi      -dBm signal
+            netmode    3G/4G
+            oper      ? ... operation
+            netstatus  Connected/Disconnected
+            
+
+1002:    Get general ifconfig for wlan/modem
+            result.IP 
+            result.mask 
+            result.dns1 
+            resuls.dns2  
+            result.ssid
+            result.wlan_ip
+            result.pwd
+		
+    
+1003:    Get TX RX data + other value
+            up_bytes    TX
+            down_bytes  RX
+            client_num  Wifi clients allowed/connected
+            maxSta      Max wifi clients allowed
+
+
+1004:    connmode / conn_mode  3g/4g, #manual needs to get its values defined (umts/lte)
+
+1011:    DHCP - Set
+            ip
+            dsn1
+            dns2
+            range_low    ?
+            range_high   ?
+            device_arr    from func showCurrentDev
+
+1012:    DHCP - Set DNS - Validation
+            dns1
+            dns2
+
+1013:    Related to function get_lan_operation
+
+1014:    Related to function get_lan_operation
+            
+1015:    SIM STATUS
+            sim_status
+            imsi
+            iccid
+
+            possible values (from JS vars)
+                b = "ready"
+                d = "absent"
+                e = "PIN Required"
+                d = "PUK required"
+                g = "Network Locked"
+
+1016:    check radio / apn related to / apn in use
+                profile_num    APN profile number in use
+                info_arr        Array with apn data
+                name
+                apn
+                user
+                pwd
+                auth
+
+1017:    store apn settings
+          			no:n,
+			          name:dom.find("input:eq(0)").val(),
+			          apn:dom.find("input:eq(1)").val(),
+		          	user:dom.find("input:eq(2)").val(),
+			          pwd:dom.find("input:eq(3)").val(),
+			          auth:dom.find("option[selected='selected']").val()
+
+1018:    APN connect
+
+1020:    WebGUI change pwd
+                oldpwd
+                newpwd
+                
+
+1021:    Set Radio ON/OFF
+                on / onoroff
+1022:    Get Radio Statuss (or a general "pass" dialog)
+
+1029:    imei = AT+GSN get serial number (imei)
+
+2000:    adb shell reboot-bootloader
+
+2001:    USB DEBUG
+
 2002:    AT+ EGMR=1,7,"nImei"
