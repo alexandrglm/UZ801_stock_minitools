@@ -106,8 +106,8 @@
       <div id="log"></div>
     </div>
   </div>
-
 <script>
+
   function sendFuncNo() {
     var funcNo = document.getElementById("funcNoInput").value;
     var params = {};
@@ -131,7 +131,7 @@
       if (xhr.readyState === XMLHttpRequest.DONE) {
         if (xhr.status === 200) {
           handleResponse(xhr.responseText);
-          logRequest(funcNo, params, xhr.responseText); // Agregar la respuesta al log
+          logRequest(funcNo, params, xhr.responseText);
         } else {
           document.getElementById("response").innerText = "Error: " + xhr.status + " - " + xhr.statusText;
         }
@@ -139,6 +139,7 @@
     };
 
     xhr.send(JSON.stringify(data));
+    cleanData();
   }
 
   function sendCommand() {
@@ -155,13 +156,14 @@
       if (xhr.readyState === XMLHttpRequest.DONE) {
         if (xhr.status === 200) {
           handleResponse(xhr.responseText);
-          logRequest(1033, { "command": command }, xhr.responseText); // Agregar la respuesta al log
+          logRequest(1033, { "command": command }, xhr.responseText);
         } else {
           document.getElementById("response").innerText = "Error: " + xhr.status + " - " + xhr.statusText;
         }
       }
     };
 
+    document.getElementById("commandInput").value = "";
     xhr.send(JSON.stringify(data));
   }
 
@@ -194,14 +196,15 @@
     logDiv.scrollTop = logDiv.scrollHeight;
   }
 
-  function clearParams() {
+  function cleanData() {
+     console.log("cleanData works");
+    document.getElementById("funcNoInput").value = "";
+
     for (var i = 1; i <= 5; i++) {
       document.getElementById("param" + i).value = "";
       document.getElementById("data" + i).value = "";
     }
   }
 </script>
-
-
 </body>
 </html>
