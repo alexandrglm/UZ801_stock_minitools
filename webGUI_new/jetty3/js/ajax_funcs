@@ -1,3 +1,5 @@
+AJAX POST param + data to Jetty | Jetty parses or translates in any form
+
 Functions with no analysis:
   get_lan_status
   get_lan_wwanConfig
