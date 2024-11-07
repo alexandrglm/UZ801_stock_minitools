@@ -4,4 +4,5 @@
 
 1029:   imei = AT+GSN get serial number (imei)
 
+2000:   adb shell reboot-bootloader
 2002:    AT+ EGMR=1,7,"nImei"
