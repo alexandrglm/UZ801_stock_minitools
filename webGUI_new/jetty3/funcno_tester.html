@@ -1,21 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>FuncNo tester and SHELL PARSER! </title>
+  <title>FuncNo and Shell Command Tester</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
+      color: #ddd;
+      background-color: #1e1e1e;
     }
     h1 {
-      color: #333;
+      color: #4CAF50;
     }
-    input[type="text"] {
-      width: 300px;
-      padding: 5px;
+    .container {
+      display: flex;
+    }
+    .left, .right {
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .left {
+      width: 60%;
+      border-right: 2px solid #333;
+    }
+    .right {
+      width: 40%;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 8px;
       margin-bottom: 10px;
-      border: 1px solid #ccc;
+      border: 1px solid #555;
       border-radius: 4px;
+      background-color: #333;
+      color: #ddd;
     }
     button {
       padding: 10px 20px;
@@ -29,61 +47,72 @@
       background-color: #45a049;
     }
     #commandInput {
-      width: 500px;
-      height: 200px;
+      height: 80px;
     }
-    #response {
-      border: 1px solid #ccc;
+    #response, #log {
+      border: 1px solid #555;
       padding: 10px;
       min-height: 100px;
-      width: 100%;
-      background-color: #444;
+      background-color: #222;
       white-space: pre-wrap;
+      color: #4CAF50;
+      overflow-y: scroll;
+      margin-top: 10px;
+    }
+    #log {
+      background-color: #333;
+      color: #bbb;
+    }
+    .dark-section {
+      background-color: #2e2e2e;
+      padding: 20px;
+      border-radius: 8px;
+      color: #ddd;
     }
   </style>
 </head>
 <body>
-<h1>FuncNo and Shell Command Tester</h1>
-<div>
-  <h2>FuncNo Tester</h2>
-  FuncNo: <input type="text" id="funcNoInput"><br><br>
+  <h1>FuncNo and Shell Command Tester</h1>
+  <div class="container">
+    <div class="left">
+      <div class="dark-section">
+        <h2>FuncNo Tester</h2>
+        FuncNo: <input type="text" id="funcNoInput"><button onclick="sendFuncNo()">Send FuncNo</button><br><br>
 
-  Parameter 1: <input type="text" id="param1"><br>
-  Value 1: <input type="text" id="data1"><br><br>
-  Parameter 2: <input type="text" id="param2"><br>
-  Value 2: <input type="text" id="data2"><br><br>
-  Parameter 3: <input type="text" id="param3"><br>
-  Value 3: <input type="text" id="data3"><br><br>
-  Parameter 4: <input type="text" id="param4"><br>
-  Value 4: <input type="text" id="data4"><br><br>
-  Parameter 5: <input type="text" id="param5"><br>
-  Value 5: <input type="text" id="data5"><br><br>
-  Parameter 6: <input type="text" id="param6"><br>
-  Value 6: <input type="text" id="data6"><br><br>
-  Parameter 7: <input type="text" id="param7"><br>
-  Value 7: <input type="text" id="data7"><br><br>
-  Parameter 8: <input type="text" id="param8"><br>
-  Value 8: <input type="text" id="data8"><br><br>
-  Parameter 9: <input type="text" id="param9"><br>
-  Value 9: <input type="text" id="data9"><br><br>
-  Parameter 10: <input type="text" id="param10"><br>
-  Value 10: <input type="text" id="data10"><br><br>
+        Parameter 1: <input type="text" id="param1"><br>
+        Value 1: <input type="text" id="data1"><br><br>
+        Parameter 2: <input type="text" id="param2"><br>
+        Value 2: <input type="text" id="data2"><br><br>
+        Parameter 3: <input type="text" id="param3"><br>
+        Value 3: <input type="text" id="data3"><br><br>
+        Parameter 4: <input type="text" id="param4"><br>
+        Value 4: <input type="text" id="data4"><br><br>
+        Parameter 5: <input type="text" id="param5"><br>
+        Value 5: <input type="text" id="data5"><br><br>
 
-  <button onclick="sendFuncNo()">Send FuncNo</button>
 
-  <h2>SHELL!:</h2>
-  Command: <input type="text" id="commandInput"><br><br>
-  <button onclick="sendCommand()">Send cmd</button>
-</div>
 
-<h2>Data response from device:</h2>
-<div id="response"></div>
+        <h2>Shell testing</h2>
+        Command: <textarea id="commandInput"></textarea><br>
+        <button onclick="sendCommand()">Send Command</button>
+      </div>
+    </div>
+
+    <div class="right">
+      <h2>Response</h2>
+      <div id="response"></div>
+
+      <h2>Log</h2>
+      <div id="log"></div>
+    </div>
+  </div>
+
 <script>
   function sendFuncNo() {
     var funcNo = document.getElementById("funcNoInput").value;
     var params = {};
 
-    for (var i = 1; i <= 10; i++) {
+    for (var i = 1; i <= 5; i++) {
       var paramKey = document.getElementById("param" + i).value;
       var paramValue = document.getElementById("data" + i).value;
       if (paramKey) {
@@ -99,22 +128,20 @@
     xhr.timeout = 8000;
 
     xhr.onreadystatechange = function() {
-      if (this.readyState === XMLHttpRequest.DONE) {
-        if (this.status === 200) {
-          document.getElementById("response").innerText = this.responseText;
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+          handleResponse(xhr.responseText);
+          logRequest(funcNo, params, xhr.responseText); // Agregar la respuesta al log
         } else {
-          if (this.status === 0) {
-            alert("DEBUG: Server unavailable.");
-          } else {
-            alert("DEBUG: Error: " + this.status + " - " + this.statusText);
-          }
+          document.getElementById("response").innerText = "Error: " + xhr.status + " - " + xhr.statusText;
         }
       }
-    }
+    };
+
     xhr.send(JSON.stringify(data));
   }
 
-  function sendCommand() { // :-D
+  function sendCommand() {
     var command = document.getElementById("commandInput").value;
 
     var data = { "funcNo": 1033, "command": command };
@@ -123,21 +150,58 @@
     xhr.open("POST", "http://192.168.100.1/ajax", true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.timeout = 8000;
+
     xhr.onreadystatechange = function() {
-      if (this.readyState === XMLHttpRequest.DONE) {
-        if (this.status === 200) {
-          document.getElementById("response").innerText = this.responseText;
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+          handleResponse(xhr.responseText);
+          logRequest(1033, { "command": command }, xhr.responseText); // Agregar la respuesta al log
         } else {
-          if (this.status === 0) {
-            alert("DEBUG: Server unavailable.");
-          } else {
-            alert("DEBUG: Error: " + this.status + " - " + this.statusText);
-          }
+          document.getElementById("response").innerText = "Error: " + xhr.status + " - " + xhr.statusText;
         }
       }
-    }
+    };
+
     xhr.send(JSON.stringify(data));
   }
+
+  function handleResponse(responseText) {
+    document.getElementById("response").innerText = responseText;
+  }
+
+  function logRequest(funcNo, params, response) {
+    var logDiv = document.getElementById("log");
+
+    var logMessage = "-----\n";
+    logMessage += "FuncNo: " + funcNo + "\n";
+    logMessage += "Params/Data sent: \n";
+
+    if (Object.keys(params).length > 0) {
+      for (var param in params) {
+        logMessage += param + ": " + params[param] + "\n";
+      }
+    } else {
+      logMessage += "No params sent.\n";
+    }
+
+    logMessage += "Response: \n" + response + "\n";
+    logMessage += "-----\n";
+
+    var logEntry = document.createElement("div");
+    logEntry.textContent = logMessage;
+    logDiv.appendChild(logEntry);
+
+    logDiv.scrollTop = logDiv.scrollHeight;
+  }
+
+  function clearParams() {
+    for (var i = 1; i <= 5; i++) {
+      document.getElementById("param" + i).value = "";
+      document.getElementById("data" + i).value = "";
+    }
+  }
 </script>
+
+
 </body>
 </html>
