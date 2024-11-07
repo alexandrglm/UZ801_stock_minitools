@@ -1,81 +1,143 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>FuncNo tester</title>
+  <title>FuncNo tester and SHELL PARSER! </title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    input[type="text"] {
+      width: 300px;
+      padding: 5px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #commandInput {
+      width: 500px;
+      height: 200px;
+    }
+    #response {
+      border: 1px solid #ccc;
+      padding: 10px;
+      min-height: 100px;
+      width: 100%;
+      background-color: #444;
+      white-space: pre-wrap;
+    }
+  </style>
 </head>
 <body>
+<h1>FuncNo and Shell Command Tester</h1>
+<div>
+  <h2>FuncNo Tester</h2>
+  FuncNo: <input type="text" id="funcNoInput"><br><br>
 
-  <h1>FuncNo Tester</h1>
+  Parameter 1: <input type="text" id="param1"><br>
+  Value 1: <input type="text" id="data1"><br><br>
+  Parameter 2: <input type="text" id="param2"><br>
+  Value 2: <input type="text" id="data2"><br><br>
+  Parameter 3: <input type="text" id="param3"><br>
+  Value 3: <input type="text" id="data3"><br><br>
+  Parameter 4: <input type="text" id="param4"><br>
+  Value 4: <input type="text" id="data4"><br><br>
+  Parameter 5: <input type="text" id="param5"><br>
+  Value 5: <input type="text" id="data5"><br><br>
+  Parameter 6: <input type="text" id="param6"><br>
+  Value 6: <input type="text" id="data6"><br><br>
+  Parameter 7: <input type="text" id="param7"><br>
+  Value 7: <input type="text" id="data7"><br><br>
+  Parameter 8: <input type="text" id="param8"><br>
+  Value 8: <input type="text" id="data8"><br><br>
+  Parameter 9: <input type="text" id="param9"><br>
+  Value 9: <input type="text" id="data9"><br><br>
+  Parameter 10: <input type="text" id="param10"><br>
+  Value 10: <input type="text" id="data10"><br><br>
 
-  <div>
-    <!--- boxes attemps --->
-    FuncNo: <input type="text" id="funcNoInput"><button onclick="sendFuncNo()">Send</button><br><br>
-    Parameter 1: <input type="text" id="param1"><br>
-    Value 1: <input type="text" id="data1"><br><br>
-    Parameter 2: <input type="text" id="param2"><br>
-    Value 2: <input type="text" id="data2"><br><br>
-    Parameter 3: <input type="text" id="param3"><br>
-    Value 3: <input type="text" id="data3"><br><br>
-    Parameter 4: <input type="text" id="param4"><br>
-    Value 4: <input type="text" id="data4"><br><br>
-    Parameter 5: <input type="text" id="param5"><br>
-    Value 5: <input type="text" id="data5"><br><br>
-    Parameter 6: <input type="text" id="param6"><br>
-    Value 6: <input type="text" id="data6"><br><br>
-    Parameter 7: <input type="text" id="param7"><br>
-    Value 7: <input type="text" id="data7"><br><br>
-    Parameter 8: <input type="text" id="param8"><br>
-    Value 8: <input type="text" id="data8"><br><br>
-    Parameter 9: <input type="text" id="param9"><br>
-    Value 9: <input type="text" id="data9"><br><br>
-    Parameter 10: <input type="text" id="param10"><br>
-    Value 10: <input type="text" id="data10"><br><br>
-  </div>
+  <button onclick="sendFuncNo()">Send FuncNo</button>
 
-        <!-- burdo intento de agilziarlo en php -->
-  <?php for ($i = 1; $i <= 10; $i++): ?>
-    PHP testing "Parameter" <?php echo $i; ?>: <input type="text" id="param<?php echo $i; ?>"><br>
-    PHP testing "Value" <?php echo $i; ?>: <input type="text" id="data<?php echo $i; ?>"><br><br>
-  <?php endfor; ?>
+  <h2>SHELL!:</h2>
+  Command: <input type="text" id="commandInput"><br><br>
+  <button onclick="sendCommand()">Send cmd</button>
+</div>
 
-  <h2>Device response (json arrays):</h2>
-  <div id="response" style="border: 1px solid #ccc; padding: 10px; min-height: 100px;"></div>
+<h2>Data response from device:</h2>
+<div id="response"></div>
+<script>
+  function sendFuncNo() {
+    var funcNo = document.getElementById("funcNoInput").value;
+    var params = {};
 
-  <script>
-    function sendFuncNo() {
-      var funcNo = document.getElementById("funcNoInput").value;
-      var params = {};
-
-      for (var i = 1; i <= 10; i++) {
-        var paramKey = document.getElementById("param" + i).value;
-        var paramValue = document.getElementById("data" + i).value;
-        if (paramKey) {
-          params[paramKey] = paramValue;
-        }
+    for (var i = 1; i <= 10; i++) {
+      var paramKey = document.getElementById("param" + i).value;
+      var paramValue = document.getElementById("data" + i).value;
+      if (paramKey) {
+        params[paramKey] = paramValue;
       }
+    }
 
-      var data = { "funcNo": funcNo, ...params };
+    var data = { "funcNo": funcNo, ...params };
 
-      var xhr = new XMLHttpRequest();
-      xhr.open("POST", "http://192.168.100.1/ajax", true);
-      xhr.setRequestHeader("Content-Type", "application/json");
-      xhr.timeout = 20000; // Timeout!!!!!!!!!!!!!!!!!!!!!!! note this !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "http://192.168.100.1/ajax", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.timeout = 8000;
 
-      xhr.onreadystatechange = function() {
-        if (this.readyState === XMLHttpRequest.DONE) {
-          if (this.status === 200) {
-            document.getElementById("response").innerText = this.responseText;
+    xhr.onreadystatechange = function() {
+      if (this.readyState === XMLHttpRequest.DONE) {
+        if (this.status === 200) {
+          document.getElementById("response").innerText = this.responseText;
+        } else {
+          if (this.status === 0) {
+            alert("DEBUG: Server unavailable.");
           } else {
-            if (this.status === 0) {
-              alert("DEBUG: Server unavailable.");
-            } else {
-              alert("DEBUG: Error: " + this.status + " - " + this.statusText);
-            }
+            alert("DEBUG: Error: " + this.status + " - " + this.statusText);
           }
         }
       }
-      xhr.send(JSON.stringify(data));
     }
-  </script>
+    xhr.send(JSON.stringify(data));
+  }
+
+  function sendCommand() { // :-D
+    var command = document.getElementById("commandInput").value;
+
+    var data = { "funcNo": 1033, "command": command };
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "http://192.168.100.1/ajax", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.timeout = 8000;
+    xhr.onreadystatechange = function() {
+      if (this.readyState === XMLHttpRequest.DONE) {
+        if (this.status === 200) {
+          document.getElementById("response").innerText = this.responseText;
+        } else {
+          if (this.status === 0) {
+            alert("DEBUG: Server unavailable.");
+          } else {
+            alert("DEBUG: Error: " + this.status + " - " + this.statusText);
+          }
+        }
+      }
+    }
+    xhr.send(JSON.stringify(data));
+  }
+</script>
 </body>
 </html>
