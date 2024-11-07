@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FuncNo and Shell Command Tester</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      color: #ddd;
+      background-color: #1e1e1e;
+    }
+
+    h1 {
+      color: #4CAF50;
+    }
+
+    .container {
+      display: flex;
+    }
+
+    .left, .right {
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .left {
+      width: 60%;
+      border-right: 2px solid #333;
+    }
+
+    .right {
+      width: 40%;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #555;
+      border-radius: 4px;
+      background-color: #333;
+      color: #ddd;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: red;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #commandInput {
+      height: 80px;
+    }
+
+    #response, #log {
+      border: 1px solid #555;
+      padding: 10px;
+      min-height: 100px;
+      background-color: #222;
+      white-space: pre-wrap;
+      color: #4CAF50;
+      overflow-y: scroll;
+      margin-top: 10px;
+    }
+
+    #log {
+      background-color: #333;
+      color: #bbb;
+    }
+
+    .dark-section {
+      background-color: #2e2e2e;
+      padding: 20px;
+      border-radius: 8px;
+      color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>FuncNo and Shell Command Tester</h1>
+  <div class="container">
+    <div class="left">
+      <div class="dark-section">
+
+        <h2>Brute Force FuncNo Tester</h2>
+        FuncNo FROM: <input type="number" id="funcNoFrom" value="1001"><br>
+        FuncNo TO: <input type="number" id="funcNoTo" value="20000"><br><br>
+        <button onclick="startBruteForce()">Start Brute</button>
+        <button onclick="exportLog()">Export Log</button>
+        <button onclick="clearLog()">Clear Log</button><hr>
+        <h2>FuncNo Tester</h2>
+        FuncNo: <input type="text" id="funcNoInput" onkeypress="if(event.key === 'Enter') sendFuncNo();">
+        <button onclick="sendFuncNo()">Send FuncNo</button><br><br>
+
+        Parameter 1: <input type="text" id="param1"><br>
+        Value 1: <input type="text" id="data1"><br><br>
+        Parameter 2: <input type="text" id="param2"><br>
+        Value 2: <input type="text" id="data2"><br><br>
+        Parameter 3: <input type="text" id="param3"><br>
+        Value 3: <input type="text" id="data3"><br><br>
+        Parameter 4: <input type="text" id="param4"><br>
+        Value 4: <input type="text" id="data4"><br><br>
+        Parameter 5: <input type="text" id="param5"><br>
+        Value 5: <input type="text" id="data5"><br><br>
+
+        <h2>Shell testing</h2>
+        Command: <textarea id="commandInput" placeholder="Shell test injecting the command to smali"></textarea><br>
+        <button onclick="sendCommand()">Send Command</button>
+      </div>
+    </div>
+
+    <div class="right">
+      <h2>Response</h2>
+      <div id="response"></div>
+
+      <h2>Log</h2>
+      <div id="log"></div>
+    </div>
+  </div>
+
+  <script>
+    function sendFuncNo() {
+      var funcNo = document.getElementById("funcNoInput").value;
+      var params = {};
+
+      for (var i = 1; i <= 5; i++) {
+        var paramKey = document.getElementById("param" + i).value;
+        var paramValue = document.getElementById("data" + i).value;
+        if (paramKey) {
+          params[paramKey] = paramValue;
+        }
+      }
+
+      var data = { "funcNo": funcNo, ...params };
+
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "http://192.168.100.1/ajax", true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.timeout = 8000;
+
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 200) {
+            handleResponse(xhr.responseText);
+            logRequest(funcNo, params, xhr.responseText);
+          } else {
+            document.getElementById("response").innerText = "Error: " + xhr.status + " - " + xhr.statusText;
+          }
+        }
+      };
+
+      xhr.send(JSON.stringify(data));
+      cleanData();
+    }
+
+    function sendCommand() {
+      var command = document.getElementById("commandInput").value;
+      if (command.trim() === "") {
+        console.log("No command entered");
+        return;
+      }
+
+      var data = { "funcNo": 2001, "command": command };
+
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "http://192.168.100.1/ajax", true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.timeout = 8000;
+      xhr.onreadystatechange = function() {
+        if (this.readyState === XMLHttpRequest.DONE) {
+          if (this.status === 200) {
+            document.getElementById("response").innerText = this.responseText;
+          } else {
+            if (this.status === 0) {
+              alert("DEBUG: Server unavailable.");
+            } else {
+              alert("DEBUG: Error: " + this.status + " - " + this.statusText);
+            }
+          }
+        }
+      }
+      xhr.send(JSON.stringify(data));
+    }
+
+    function handleResponse(responseText) {
+      document.getElementById("response").innerText = responseText;
+    }
+
+    function logRequest(funcNo, params, response) {
+      var logDiv = document.getElementById("log");
+
+      var logMessage = "-----\n";
+      logMessage += "FuncNo: " + funcNo + "\n";
+      logMessage += "Params/Data sent: \n";
+
+      if (Object.keys(params).length > 0) {
+        for (var param in params) {
+          logMessage += param + ": " + params[param] + "\n";
+        }
+      } else {
+        logMessage += "No params sent.\n";
+      }
+
+      logMessage += "Response: \n" + response + "\n";
+      logMessage += "-----\n";
+
+      var logEntry = document.createElement("div");
+      logEntry.textContent = logMessage;
+      logDiv.appendChild(logEntry);
+
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    async function startBruteForce() {
+      var funcNoFrom = parseInt(document.getElementById("funcNoFrom").value);
+      var funcNoTo = parseInt(document.getElementById("funcNoTo").value);
+      var count = 0;
+
+      for (var funcNo = funcNoFrom; funcNo <= funcNoTo; funcNo++) {
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://192.168.100.1/ajax", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+              logRequest(funcNo, {}, xhr.responseText);
+            } else {
+              logRequest(funcNo, {}, "Error: " + xhr.status + " - " + xhr.statusText);
+            }
+          }
+        };
+
+        xhr.send(JSON.stringify({ "funcNo": funcNo }));
+
+        count++;
+        if (count === 5) {
+          await new Promise(resolve => setTimeout(resolve, 5000));
+          count = 0;
+        }
+      }
+
+      alert("End, Press Enter");
+    }
+
+    function exportLog() {
+      var logDiv = document.getElementById("log");
+      var logText = logDiv.textContent;
+      var blob = new Blob([logText], { type: "text/plain" });
+      var link = document.createElement("a");
+
+      link.href = URL.createObjectURL(blob);
+      link.download = "funcno_log.txt";
+      link.click();
+    }
+
+    function clearLog() {
+      document.getElementById("log").innerHTML = "";
+    }
+
+    function cleanData() {
+      document.getElementById("funcNoInput").value = "";
+
+      for (var i = 1; i <= 5; i++) {
+        document.getElementById("param" + i).value = "";
+        document.getElementById("data" + i).value = "";
+      }
+    }
+  </script>
+</body>
+</html>
