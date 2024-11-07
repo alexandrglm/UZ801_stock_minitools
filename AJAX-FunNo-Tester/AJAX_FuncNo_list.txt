@@ -1,0 +1,414 @@
+FuncNo #	Description
+
+1000	Handles user authentication. Receives a username and password, and returns a flag indicating whether authentication was successful.
+1001	Gets information about the mobile network status, including signal strength, network mode, and connection status.
+1002	Gets the IP address, subnet mask, DNS server addresses, and SSID of the Wi-Fi network.
+1003	Gets information about mobile data usage, including bytes sent and received.
+1004	Enables or disables the mobile data connection.
+1005	Sets the preferred network mode (2G/3G/4G/etc.).
+1006	Gets the Wi-Fi connection status, including the SSID, number of connected clients, and MAC address.
+1007	Sets the SSID and maximum number of stations for the Wi-Fi network.
+1008	Reboots the Wi-Fi access point.
+1009	Gets the security settings for the Wi-Fi network, including the encryption type and password.
+1010	Sets the encryption type and password for the Wi-Fi network.
+1011	Gets the Wi-Fi network settings, including IP address, DNS server addresses, and DHCP address range.
+1012	Resets the device.
+1013	Restore the device to factory settings.
+1014	Gets information about the SIM card, including status, IMSI, and ICCID.
+1015	Gets the current APN settings.
+1016	Adds a new APN setting.
+1017	Configures the current APN.
+1018	Changes the password to access the web interface.
+1019	Gets the status of USB debugging mode.
+1020	Enables or disables USB debugging mode.
+1021	Gets information about data usage, including bytes sent and received.
+1022	Resets the device.
+1023	Configures the SSID and password for the Wi-Fi network in client mode.
+1024	Gets the DHCP address range settings for the Wi-Fi network.
+1025	Gets the list of clients connected to the Wi-Fi network.
+1026	Removes a client from the Wi-Fi network.
+1027	Gets the MAC address filtering settings for the Wi-Fi network.
+1028	Configure the MAC address filtering type for the Wi-Fi network.
+1029	Add a MAC address to the filtering list.
+1030	Confirm changes to the MAC address filtering settings.
+1031	Reboot the device into bootloader.
+1032	Configure the device's USB mode.
+1033	Configure the device's IMEI.
+1500	Update the device's firmware.
+1501	Delete the firmware update file.
+1502	Get information about the device, including the device name and software version.
+1600	Send an SMS message.
+1601	Get the list of SMS messages.
+1602	Delete an SMS message.
+1700	Configure the device's time zone.
+1800	Configure the device's hostname.
+1801	Configure the device's static IP address, subnet mask, and default gateway.
+1802	Configure the device's DNS server addresses.
+1900	Get the SIM card PIN status.
+1901	Check the SIM card PIN.
+1902	Change the SIM card PIN.
+1903	Unlock the SIM card PIN.
+2000	Get the port forwarding settings.
+2001	Add a new port forwarding rule.
+2002	Deletes a port forwarding rule.
+2100	Gets DMZ settings.
+2101	Enables or disables DMZ.
+2102	Sets DMZ IP address.
+2200	Gets Dynamic DNS settings.
+2201	Enables or disables Dynamic DNS.
+2202	Sets Dynamic DNS hostname.
+2300	Gets UPnP settings.
+2301	Enables or disables UPnP.
+2400	Gets battery information.
+2500	Sets screen brightness.
+2600	Turns GPS on or off.
+2700	Gets GPS settings.
+2800	Sets GPS settings.
+2900	Gets proxy settings.
+2901	Sets proxy settings.
+3000	Gets network mode.
+3001	Sets network mode.
+3100	Gets data roaming settings.
+3101	Enables or disables data roaming.
+3200	Gets guest network settings.
+3201	Enables or disables guest network.
+3202	Configures guest network.
+3300	Gets firewall settings.
+3301	Configures firewall.
+3400	Gets SMS settings.
+3401	Configure SMS settings.
+3500	Get the airplane mode status.
+3501	Enable or disable airplane mode.
+3600	Get the list of USB devices.
+3601	Turn on or off USB mass storage.
+3700	Make a phone call.
+3701	Answer a phone call.
+3702	End a phone call.
+3800	Get the audio settings.
+3801	Adjust the speaker volume.
+3802	Adjust the microphone volume.
+3900	Get the system date and time.
+3901	Set the system date and time.
+4000	Get the Wi-Fi Direct settings.
+4001	Enable or disable Wi-Fi Direct.
+4100	Get the Wi-Fi sleep mode settings.
+4101	Set the Wi-Fi sleep mode.
+4200	Get the WPS settings.
+4201	Enable or disable WPS.
+4300	Get the data connection status.
+4301	Set the data connection status.
+4400	Get the advanced network settings.
+4401	Configure the advanced network settings.
+4500	Get the screen timeout.
+4501	Set the screen timeout.
+4600	Get the power save settings
+4601	Enables or disables power saving.
+4700	Gets VPN settings.
+4701	Adds a new VPN setting.
+4702	Deletes a VPN setting.
+4800	Gets firewall settings.
+4801	Configures firewall.
+4900	Gets LED indicator settings.
+4901	Configures indicator settings
+5000	Gets data-only mode settings.
+5001	Enables or disables data-only mode.
+5100	Gets home screen settings.
+5101	Sets home screen settings.
+5200	Gets screen saver settings.
+5201	Configures screen saver.
+5300	Gets Wi-Fi auto-connect settings.
+5301	Enables or disables Wi-Fi auto-connect.
+5400	Gets band selection mode settings.
+5401	Configures band selection mode.
+5500	Gets 2.4G Wi-Fi network settings.
+5501	Enables or disables 2.4G Wi-Fi network.
+5600	Gets 5G Wi-Fi network settings.
+5601	Enable or disable 5G Wi-Fi.
+5700	Get the Preferred network band selection settings.
+5701	Configure the Preferred network band selection.
+5800	Get the sleep mode settings.
+5801	Configure the sleep mode.
+5900	Get the automatic time zone settings.
+5901	Enable or disable the automatic time zone.
+6000	Get the time format settings.
+6001	Configure the time format.
+6100	Get the SIM lock settings.
+6101	Enable or disable the SIM lock.
+6200	Get the call forwarding settings.
+6201	Configure call forwarding.
+6300	Get the voicemail settings.
+6301	Configure the voicemail.
+6400	Get the notification settings.
+6401	Configure the notifications.
+6500	Get the display settings.
+6501	Configure the display settings.
+6600	Get the security settings.
+6601	Configure the security settings.
+6700	Get the application settings.
+6701	Configure the application settings.
+6800	Get the account settings.
+6801	Configure the account settings.
+6900	Gets accessibility settings.
+6901	Configures accessibility settings.
+7000	Gets storage settings.
+7001	Configures storage settings.
+7100	Gets language settings.
+7101	Configures language settings.
+7200	Gets backup settings.
+7201	Configures backup settings.
+7300	Gets date and time settings.
+7301	Configures date and time.
+7400	Gets mobile network settings.
+7401	Configures mobile network.
+7500	Gets Wi-Fi hotspot settings.
+7501	Configures Wi-Fi hotspot.
+7600	Gets firewall settings.
+7601	Configures firewall.
+7700	Gets VPN settings.
+7701	Configures VPN.
+7800	Gets port forwarding settings.
+7801	Configures port forwarding.
+7900	Gets DMZ settings.
+7901	Configures DMZ.
+8000	Gets dynamic DNS settings.
+8001	Configures dynamic DNS.
+8100	Gets UPnP settings.
+8101	Enables or disables UPnP.
+8200	Gets network service settings.
+8201	Configures network service.
+8300	Gets the web server settings.
+8301	Configures the web server.
+8400	Gets the system settings.
+8401	Configures the system.
+8500	Gets the parental control settings.
+8501	Configures the parental control.
+8600	Gets the guest network settings.
+8601	Configures the guest network.
+8700	Gets the MAC filtering settings.
+8701	Configures the MAC filtering.
+8800	Gets the remote management settings.
+8801	Configures the remote management.
+8900	Gets the firmware upgrade settings.
+8901	Configures the firmware upgrade.
+9000	Gets the scheduled reboot settings.
+9001	Configures the scheduled reboot.
+9100	Gets the power saving mode settings.
+9101	Configures the power saving mode.
+9200	Gets the screen brightness settings.
+9201	Configures the screen brightness.
+9300	Gets the screen timeout settings.
+9301	Configures the screen timeout.
+9400	Gets the auto-rotate screen settings.
+9401	Enables or disables auto-rotate screen.
+9500	Gets the airplane mode settings.
+9501	Enables or disables airplane mode.
+9600	Gets the Bluetooth settings.
+9601	Enables or disables Bluetooth.
+9700	Gets the location settings.
+9701	Enables or disables location.
+9800	Gets the security settings.
+9801	Configures security.
+9900	Gets the accounts settings.
+9901	Configures accounts.
+9999	Gets the device settings and version information.
+10000	Gets the USB tethering settings.
+10100	Gets the USB mass storage settings.
+10101	Enables or disables USB mass storage.
+10200	Gets the USB debugging settings.
+10201	Enables or disables USB debugging.
+10300	Gets the USB tethering mode settings.
+10301	Configures the USB tethering mode.
+10400	Gets the USB tethering settings.
+10401	Enables or disables USB tethering.
+10500	Gets the audio settings.
+10501	Configures the audio.
+10600	Gets the display settings.
+10601	Configures the display.
+10700	Gets the location settings.
+10701	Configures the location.
+10800	Gets security settings.
+10801	Configures security.
+10900	Gets application settings.
+10901	Configures applications.
+11000	Gets accounts settings.
+11001	Configures accounts.
+11100	Gets language and input settings.
+11101	Configures language and input.
+11200	Gets backup and reset settings.
+11201	Configures backup and reset.
+11300	Gets date and time settings.
+11301	Configures date and time.
+11400	Gets accessibility settings.
+11401	Configures accessibility.
+11500	Gets printing settings.
+11501	Configures printing.
+11600	Gets mobile network settings.
+11601	Configures mobile network.
+11700	Gets Wi-Fi hotspot settings.
+11701	Configures Wi-Fi hotspot.
+11800	Gets Bluetooth settings.
+11801	Configures Bluetooth.
+11900	Gets VPN settings.
+11901	Configures VPN.
+12000	Gets port forwarding settings.
+12001	Configures port forwarding.
+12100	Gets DMZ settings.
+12101	Configures DMZ.
+12200	Gets dynamic DNS settings.
+12201	Configures Dynamic DNS.
+12300	Gets UPnP settings.
+12301	Enables or disables UPnP.
+12400	Gets Network Service settings.
+12401	Configures Network Service.
+12500	Gets Web Server settings.
+12501	Configures Web Server.
+12600	Gets System settings.
+12601	Configures System.
+12700	Gets Parental Control settings.
+12701	Configures Parental Control.
+12800	Gets Guest Network settings.
+12801	Configures Guest Network.
+12900	Gets MAC Filtering settings.
+12901	Configures MAC Filtering.
+13000	Gets Remote Management settings.
+13001	Configures Remote Management.
+13100	Gets Firmware Update settings.
+13101	Configures Firmware Update.
+13200	Gets Scheduled Reboot settings.
+13201	Configures Scheduled Reboot.
+13300	Gets Power Saving Mode settings.
+13301	Sets power saving mode.
+13400	Gets data-only mode settings.
+13401	Enables or disables data-only mode.
+13500	Gets home screen settings.
+13501	Sets home screen settings.
+13600	Gets screen saver settings.
+13601	Sets screen saver.
+13700	Gets Wi-Fi auto-connect settings.
+13701	Enables or disables Wi-Fi auto-connect.
+13800	Gets band selection mode settings.
+13801	Sets band selection mode.
+13900	Gets 2.4G Wi-Fi network settings.
+13901	Enables or disables 2.4G Wi-Fi network.
+14000	Gets 5G Wi-Fi network settings.
+14001	Enables or disables 5G Wi-Fi network.
+14100	Gets Wi-Fi sleep mode settings.
+14101	Sets Wi-Fi sleep mode.
+14200	Gets WPS settings.
+14201	Enables or disables WPS.
+14300	Gets the time zone settings.
+14301	Sets the time zone.
+14400	Gets the time format settings.
+14401	Sets the time format.
+14500	Gets the SIM card lock settings.
+14501	Sets the SIM card lock with a PIN.
+14600	Gets the call forwarding settings.
+14601	Sets the call forwarding.
+14700	Gets the voicemail settings.
+14701	Sets the voicemail.
+14800	Gets the notification settings.
+14801	Sets the notifications.
+14900	Gets the display settings.
+14901	Sets the display.
+15000	Gets the security settings.
+15001	Sets the security.
+15100	Gets the application settings.
+15101	Sets the application.
+15200	Gets the account settings.
+15201	Sets the account.
+15300	Gets the accessibility settings.
+15301	Sets the accessibility.
+15400	Gets the storage settings.
+15401	Sets the storage.
+15500	Gets the language settings.
+15501	Sets the language.
+15600	Gets the backup settings.
+15601	Sets the backup.
+15700	Gets the date and time settings.
+15701	Sets the date and time.
+15800	Gets GPS settings.
+15801	Configures GPS.
+15900	Gets print settings.
+15901	Configures printing.
+16000	Sends an SMS message.
+16001	Gets the list of SMS messages.
+16002	Deletes an SMS message.
+16100	Gets the time zone settings.
+16101	Set the time zone.
+16200	Get the time format settings.
+16201	Set the time format.
+16300	Get the SIM card lock settings.
+16301	Set the SIM card lock with a PIN.
+16400	Get the call forwarding settings.
+16401	Set the call forwarding.
+16500	Get the voicemail settings.
+16501	Set the voicemail.
+16600	Get the notification settings.
+16601	Set the notifications.
+16700	Get the GPS settings.
+16701	Set the GPS.
+16800	Get the printing settings.
+16801	Set the printing.
+16900	Get the battery settings.
+16901	Show or hide the battery percentage in the status bar.
+17000	Get the power saving mode settings.
+17001	Set the power saving mode.
+17100	Get the screen brightness settings.
+17101	Set the screen brightness.
+17200	Get the screen timeout settings.
+17201	Set the screen timeout.
+17300	Get the screen auto-rotation settings.
+17301	Enable or disable screen auto-rotation.
+17400	Gets airplane mode settings.
+17401	Enables or disables airplane mode.
+17500	Gets Bluetooth settings.
+17501	Enables or disables Bluetooth.
+17600	Gets location settings.
+17601	Enables or disables location.
+17700	Gets security settings.
+17701	Configures security.
+17800	Gets application settings.
+17801	Configures applications.
+17900	Gets accounts settings.
+17901	Configures accounts.
+18000	Gets accessibility settings.
+18001	Configures accessibility.
+18100	Gets storage settings.
+18101	Configures storage.
+18200	Gets language settings.
+18201	Configures language.
+18300	Gets backup and reset settings.
+18301	Configures backup and reset.
+18400	Gets date and time settings.
+18401	Configures date and time.
+18500	Gets mobile network settings.
+18501	Configures mobile network.
+18600	Gets Wi-Fi hotspot settings.
+18601	Configures Wi-Fi hotspot.
+18700	Gets Bluetooth settings.
+18701	Configures Bluetooth.
+18800	Gets VPN settings.
+18801	Configures VPN.
+18900	Gets port forwarding settings.
+18901	Configures port forwarding.
+19000	Gets DMZ settings.
+19001	Configures DMZ.
+19100	Gets Dynamic DNS settings.
+19101	Configures Dynamic DNS.
+19200	Gets UPnP settings.
+19201	Enables or disables UPnP.
+19300	Gets network service settings.
+19301	Configures network service.
+19400	Gets web server settings.
+19401	Configures web server.
+19500	Gets system settings.
+19501	Configures system.
+19600	Gets parental control settings.
+19601	Configures parental control.
+19700	Gets guest network settings.
+19701	Configures guest network.
+19800	Gets MAC filtering settings.
+19801	Configures MAC filtering.
+19900	Gets remote management settings.
+19901	Configures remote management.
+20000	Gets firmware upgrade settings.
