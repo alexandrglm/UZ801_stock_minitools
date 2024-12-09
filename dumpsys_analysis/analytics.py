@@ -1,5 +1,5 @@
 #########################################################
-# - Device Analysis tool - v.0.4                        #
+# - Device Analysis tool - v.0.6 -                      #
 #                                                       #
 # Author: Alexandr Gomez @alexandrglm                   #
 #                                                       #
