@@ -104,6 +104,6 @@ adb pull /sdcard/busybox.log
 
 clear
 echo "Procesing data ..."
-python3 analytics_simplyfied.py
+python3 analytics.py
 rm -rf *.log
 echo "Done!"
