@@ -88,7 +88,7 @@ def generateHTML(dumpSysData, procData, dmesgData, ipAData, getSystemBins, getUs
     serialNo = match.group(1) if match else 'unknown'
 
     inputDeviceInfo = input("Device Brand - Model? : ")
-    html_path = f"./www/Analysis_{inputDeviceInfo}-{serialNo}-{date}.html"
+    htmlPath = f"./www/Analysis_{inputDeviceInfo}-{serialNo}-{date}.html"
 
     buildDate = re.search(r'\[ro\.build\.date]: \[(.*?)\]', getpropData)
     buildFingerprint = re.search(r'\[ro\.build\.fingerprint]: \[(.*?)\]', getpropData)
@@ -109,13 +109,13 @@ def generateHTML(dumpSysData, procData, dmesgData, ipAData, getSystemBins, getUs
     vmstat = procData.get('/proc/vmstat', 'N/A')
     interrupts = procData.get('/proc/interrupts', 'N/A')
 
-    with open(html_path, "w") as f:
+    with open(htmlPath, "w") as f:
         f.write(f"""
 <!DOCTYPE html>
 <html>
   <head>
     <title>Analysis: {inputDeviceInfo} - {serialNo} - {date}</title>
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="./css/styles.css">
     <script defer src="../js/script.js"></script>
   </head>
   <body>
