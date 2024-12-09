@@ -116,7 +116,7 @@ def generateHTML(dumpSysData, procData, dmesgData, ipAData, getSystemBins, getUs
   <head>
     <title>Analysis: {inputDeviceInfo} - {serialNo} - {date}</title>
     <link rel="stylesheet" href="./css/styles.css">
-    <script defer src="../js/script.js"></script>
+    <script defer src="./js/script.js"></script>
   </head>
   <body>
     <h1>{inputDeviceInfo}</h1>
