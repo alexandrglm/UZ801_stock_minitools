@@ -1,15 +1,17 @@
 #!/bin/sh
 
 echo "#########################################################"
-echo "# - Device Analysis tool - v.0.4                        #"
+echo "# - Device Analysis tool - v.0.6 -                      #"
 echo "#                                                       #"
 echo "# Author: Alexandr Gomez @alexandrglm                   #"
-echo "# Nov, 5. 2024                                          #"
+echo "# Dec, 12. 2024                                         #"
 echo "#########################################################"
 echo ""
 echo ""
 echo "Retrieving data from device, please wait."
 echo ""
+
+# Pending: gettingData new methods for serialNo, battery info and many other using "adb shell X | grep -i Y"
 
 # Parte de dumpsys
 adb shell rm -rf /sdcard/dumpsys.log
@@ -102,6 +104,6 @@ adb pull /sdcard/busybox.log
 
 clear
 echo "Procesing data ..."
-python3 analytics.py
+python3 analytics_simplyfied.py
 rm -rf *.log
 echo "Done!"
