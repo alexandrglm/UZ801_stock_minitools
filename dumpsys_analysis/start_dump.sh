@@ -104,6 +104,19 @@ adb pull /sdcard/busybox.log
 
 clear
 echo "Procesing data ..."
-python3 analytics.py
+
+# needs to be line by file for ensuring compatibily with any shell version
+adb shell "rm -rf /sdcard/dumpsys.log"
+adb shell "rm -rf /sdcard/proc.log"
+adb shell "rm -rf /sdcard/dmesg.log"
+adb shell "rm -rf /sdcard/packagesS.log"
+adb shell "rm -rf /sdcard/packages3.log"
+adb shell "rm -rf /sdcard/getprop.log"
+adb shell "rm -rf /sdcard/ipa.log"
+adb shell "rm -rf /sdcard/files.log"
+adb shell "rm -rf /sdcard/system_bins.log"
+adb shell "rm -rf /sdcard/busybox.log"
+
 rm -rf *.log
+echo "Try appying ./privacy.sh to remove any sensitive data (IP's, serials, MAC's, hostname, and others)."
 echo "Done!"
